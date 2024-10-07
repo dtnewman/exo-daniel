@@ -185,9 +185,9 @@ document.addEventListener("alpine:init", () => {
 
           // add chunk to the last message
           if (Array.isArray(chunk)) {
-            this.cstate.messages[this.cstate.messages.length - 1].content = chunk.join("")
+            this.cstate.messages[this.cstate.messages.length - 1].content += chunk.join("");
           } else {
-            this.cstate.messages[this.cstate.messages.length - 1].content += chunk
+            this.cstate.messages[this.cstate.messages.length - 1].content += chunk;
           }
 
 
