@@ -184,6 +184,7 @@ document.addEventListener("alpine:init", () => {
           }
 
           // add chunk to the last message
+          console.log("chunk", chunk)
           this.cstate.messages[this.cstate.messages.length - 1].content += chunk;
 
           // calculate performance tracking
