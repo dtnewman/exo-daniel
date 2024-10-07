@@ -15,5 +15,7 @@ class RingMemoryWeightedPartitioningStrategy(PartitioningStrategy):
       end = 1.0 if i == len(nodes) - 1 else round(start + (node[1].memory/total_memory), 5)
       partitions.append(Partition(node[0], start, end))
       start = end
-    return [Partition(nodes[1][0], 0.0, 1.0)] if len(nodes) > 1 else [Partition(nodes[0][0], 0.0, 1.0)]
+    strategy = [Partition(nodes[1][0], 0.0, 1.0)] if len(nodes) > 1 else [Partition(nodes[0][0], 0.0, 1.0)]
+    print(f"RingMemoryWeightedPartitioningStrategy: {strategy}")
+    return strategy
     # return partitions
