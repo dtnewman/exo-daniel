@@ -74,14 +74,14 @@ class TestRingMemoryWeightedPartitioningStrategy(unittest.TestCase):
 
     strategy = RingMemoryWeightedPartitioningStrategy()
     partitions = strategy.partition(topology)
-
+    
     self.assertEqual(len(partitions), 3)
     self.assertEqual(
       partitions,
       [
-        Partition("node3", 0.0, 0.42857),
-        Partition("node1", 0.6, 0.9),
-        Partition("node2", 0.9, 1.0),
+        Partition("node2", 0.0, 0.42857),
+        Partition("node1", 0.42857, 0.71428),
+        Partition("node3", 0.71428, 1.0),
       ],
     )
 
