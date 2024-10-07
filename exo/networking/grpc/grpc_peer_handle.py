@@ -1,7 +1,6 @@
 import grpc
 import numpy as np
 import asyncio
-import time
 from typing import Optional, Tuple, List
 
 from . import node_service_pb2
@@ -50,28 +49,20 @@ class GRPCPeerHandle(PeerHandle):
   async def _ensure_connected(self):
     if not await self.is_connected(): await asyncio.wait_for(self.connect(), timeout=5)
 
-  async def health_check(self, attempt=0) -> bool:
+  async def health_check(self) -> bool:
     try:
       await self._ensure_connected()
       request = node_service_pb2.HealthCheckRequest()
       response = await asyncio.wait_for(self.stub.HealthCheck(request), timeout=15)
       return response.is_healthy
     except asyncio.TimeoutError:
-      if attempt >= 3:
-        return False
-      print(f"Timeout error for {self._id}@{self.address}, retrying in {1 * (attempt + 1)} seconds...")
-      time.sleep(1 * (attempt + 1))
-      return await self.health_check(attempt + 1)
+      return False
     except:
       if DEBUG >= 4:
         print(f"Health check failed for {self._id}@{self.address}.")
         import traceback
         traceback.print_exc()
-      if attempt >= 3:
-        return False
-      print(f"Health check failed for {self._id}@{self.address}, retrying in {1 * (attempt + 1)} seconds...")
-      time.sleep(1 * (attempt + 1))
-      return await self.health_check(attempt + 1)
+      return False
 
   async def send_prompt(self, shard: Shard, prompt: str, image_str: Optional[str] = None, request_id: Optional[str] = None, inference_state: Optional[str] = None) -> Optional[np.array]:
     request = node_service_pb2.PromptRequest(
