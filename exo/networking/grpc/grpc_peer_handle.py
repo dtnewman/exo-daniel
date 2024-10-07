@@ -59,6 +59,7 @@ class GRPCPeerHandle(PeerHandle):
     except asyncio.TimeoutError:
       if attempt >= 3:
         return False
+      print(f"Timeout error for {self._id}@{self.address}, retrying in {1 * (attempt + 1)} seconds...")
       time.sleep(1 * (attempt + 1))
       return await self.health_check(attempt + 1)
     except:
@@ -68,6 +69,7 @@ class GRPCPeerHandle(PeerHandle):
         traceback.print_exc()
       if attempt >= 3:
         return False
+      print(f"Health check failed for {self._id}@{self.address}, retrying in {1 * (attempt + 1)} seconds...")
       time.sleep(1 * (attempt + 1))
       return await self.health_check(attempt + 1)
 
