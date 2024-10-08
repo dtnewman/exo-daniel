@@ -50,6 +50,8 @@ parser.add_argument("--prompt", type=str, help="Prompt for the model when using 
 parser.add_argument("--tailscale-api-key", type=str, default=None, help="Tailscale API key")
 parser.add_argument("--tailnet-name", type=str, default=None, help="Tailnet name")
 parser.add_argument("--partitioning-strategy", type=str, choices=["flops", "memory", "hybrid"], default="hybrid", help="Partitioning strategy to use")
+parser.add_argument("--mock-inference-engine-sleep-time", type=float, default=1, help="Sleep time for mock inference engine")
+parser.add_argument("--mock-inference-engine-throughput", type=int, default=1, help="Throughput for mock inference engine")
 args = parser.parse_args()
 
 print_yellow_exo()
@@ -59,7 +61,9 @@ print(f"Detected system: {system_info}")
 
 shard_downloader: ShardDownloader = HFShardDownloader(quick_check=args.download_quick_check, max_parallel_downloads=args.max_parallel_downloads)
 inference_engine_name = args.inference_engine or ("mlx" if system_info == "Apple Silicon Mac" else "tinygrad")
-inference_engine = get_inference_engine(inference_engine_name, shard_downloader)
+mock_inference_engine_sleep_time = args.mock_inference_engine_sleep_time
+mock_inference_engine_throughput = args.mock_inference_engine_throughput  
+inference_engine = get_inference_engine(inference_engine_name, shard_downloader, mock_inference_engine_sleep_time, mock_inference_engine_throughput)
 print(f"Using inference engine: {inference_engine.__class__.__name__} with shard downloader: {shard_downloader.__class__.__name__}")
 
 if args.node_port is None:
