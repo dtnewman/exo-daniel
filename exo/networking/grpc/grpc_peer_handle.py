@@ -116,6 +116,7 @@ class GRPCPeerHandle(PeerHandle):
     )
 
   async def collect_topology(self, visited: set[str], max_depth: int) -> Topology:
+    print("\n\n\n\n\n\ncollecting topology\n\n\n\n")
     request = node_service_pb2.CollectTopologyRequest(visited=visited, max_depth=max_depth)
     response = await self.stub.CollectTopology(request)
     topology = Topology()

@@ -1,10 +1,11 @@
+from collections import defaultdict, deque
 import numpy as np
 import json
 import asyncio
 import uuid
 import time
 import traceback
-from typing import List, Dict, Optional, Tuple, Union
+from typing import Deque, List, Dict, Optional, Tuple, Union
 from exo.networking import Discovery, PeerHandle, Server
 from exo.inference.inference_engine import InferenceEngine, Shard
 from .node import Node
@@ -35,6 +36,7 @@ class StandardNode(Node):
     self.partitioning_strategy = partitioning_strategy
     self.peers: List[PeerHandle] = {}
     self.topology: Topology = Topology()
+    self.latency_measurements: Dict[str, Deque[float]] = defaultdict(lambda: deque(maxlen=5))
     self.device_capabilities = device_capabilities()
     self.buffered_token_output: Dict[str, Tuple[List[int], bool]] = {}
     self.max_generate_tokens = max_generate_tokens
@@ -270,8 +272,10 @@ class StandardNode(Node):
         end_time = time.perf_counter_ns()
         elapsed_time_ms = (end_time - start_time) / 1_000_000
         # todo use this for latency measurements
-
-        
+        self.latency_measurements[target_peer.id()].append(elapsed_time_ms)
+        # take the average latency
+        avg_latency = sum(self.latency_measurements[target_peer.id()]) / len(self.latency_measurements[target_peer.id()])
+        target_peer.set_node_latency(self.id, avg_latency)
       else:
         await target_peer.send_prompt(next_shard, tensor_or_prompt, image_str=image_str, request_id=request_id, inference_state=inference_state)
 
