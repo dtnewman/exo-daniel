@@ -169,10 +169,6 @@ def mac_device_capabilities() -> DeviceCapabilities:
     memory = memory_value
 
   # Assuming static values for other attributes for demonstration
-<<<<<<< HEAD
-  foo = "BAR"
-=======
->>>>>>> dn/284-partitioning-strategy
   return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)))
 
 
