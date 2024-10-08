@@ -3,7 +3,7 @@ from exo.inference.shard import Shard
 from exo.inference.inference_engine import InferenceEngine
 from typing import List, Optional, Tuple
 import numpy as np
-
+import time
 
 class MockInferenceEngine(InferenceEngine):
     
@@ -17,6 +17,7 @@ class MockInferenceEngine(InferenceEngine):
         return np.array(array), json.dumps({"start_pos": 0, "n_captured_toks": len(array)}), False
 
     async def infer_tensor(self, request_id: str, shard: Shard, input_data: np.ndarray, inference_state: Optional[str] = None) -> Tuple[np.ndarray, str, bool]:
+        time.sleep(2)
         print("INFER TENSOR")
         for _ in range(self.throughput):
           next_token = self.response.__next__()
