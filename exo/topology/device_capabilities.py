@@ -104,17 +104,6 @@ CHIP_FLOPS = {
   "nvidia a40 48gb pcie": DeviceFlops(fp32=37.4*TFLOPS, fp16=149.7*TFLOPS, int8=299.3*TFLOPS),
   "nvidia a100 40gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
   "nvidia a100 80gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
-<<<<<<< HEAD
-  "nvidia a800 40gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
-  "nvidia a100 80gb sxm": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
-  "nvidia a800 80gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
-  "nvidia a800 80gb sxm": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
-  "nvidia t1000 8gb": DeviceFlops(fp32=2.5 * TFLOPS, fp16=5.0 * TFLOPS, int8=10.0 * TFLOPS),
-  "quadro p6000": DeviceFlops(fp32=12.5 * TFLOPS, fp16=25.0 * TFLOPS, int8=100.0 * TFLOPS),
-  "quadro m4000": DeviceFlops(fp32=2.5 * TFLOPS, fp16=5.0 * TFLOPS, int8=10.0 * TFLOPS),
-  "quadro m2000": DeviceFlops(fp32=0.5 * TFLOPS, fp16=1.0 * TFLOPS, int8=2.0 * TFLOPS),
-  "quadro p400": DeviceFlops(fp32=0.641 * TFLOPS, fp16=1.282 * TFLOPS, int8=2.564 * TFLOPS),
-=======
   "nvidia a100 80gb sxm": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
   "nvidia a800 40gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
   "nvidia a800 80gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
@@ -124,7 +113,6 @@ CHIP_FLOPS = {
   "quadro m4000": DeviceFlops(fp32=2.5 * TFLOPS, fp16=5.0 * TFLOPS, int8=10.0 * TFLOPS),
   "quadro p400": DeviceFlops(fp32=0.641 * TFLOPS, fp16=1.282 * TFLOPS, int8=2.564 * TFLOPS),
   "quadro p6000": DeviceFlops(fp32=12.5 * TFLOPS, fp16=25.0 * TFLOPS, int8=50.0 * TFLOPS),
->>>>>>> dn/284-partitioning-strategy
   # ... add more devices if needed ...
   ### AMD GPUs
   # RX 6000 series
