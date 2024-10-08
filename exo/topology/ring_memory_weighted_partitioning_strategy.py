@@ -7,8 +7,8 @@ from .partitioning_strategy import Partition
 class RingMemoryWeightedPartitioningStrategy(PartitioningStrategy):
   def partition(self, topology: Topology) -> List[Partition]:
     nodes = list(topology.all_nodes())
-    # nodes.sort(key=lambda x: (x[1].memory, x[0]))  # Sort by memory in ascending order, then by node ID
-    nodes.sort(key=lambda x: (-x[1].memory, x[0]))  # Sort by memory in descending order, then by node ID
+    nodes.sort(key=lambda x: (x[1].memory, x[0]))  # Sort by memory in ascending order, then by node ID
+    # nodes.sort(key=lambda x: (-x[1].memory, x[0]))  # Sort by memory in descending order, then by node ID
 
     print('nodes:')
     for node in nodes:
