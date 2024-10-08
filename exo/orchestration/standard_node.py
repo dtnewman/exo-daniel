@@ -267,6 +267,7 @@ class StandardNode(Node):
         raise ValueError(f"Peer for {next_partition} not found")
 
       if DEBUG >= 1: print(f"Sending tensor_or_prompt to {target_peer.id()}: {tensor_or_prompt}")
+      print(f"\nSending tensor_or_prompt to {target_peer.id()}: {tensor_or_prompt}")
 
       if isinstance(tensor_or_prompt, np.ndarray):
         await target_peer.send_tensor(next_shard, tensor_or_prompt, request_id=request_id, inference_state=inference_state)
