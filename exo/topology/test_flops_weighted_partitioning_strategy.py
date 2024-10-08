@@ -85,6 +85,42 @@ class TestFlopsWeightedPartitioningStrategy(unittest.TestCase):
       ],
     )
 
+  def test_partition_with_no_flops(self):
+    # triangle
+    # node1 -> node2 -> node3 -> node1
+
+    topology = Topology()
+    topology.update_node(
+      "node1",
+      DeviceCapabilities(
+        model="MacBook Pro",
+        chip="test1",
+        memory=128*1024*1024*1024,
+        flops=DeviceFlops(fp32=0.0, fp16=0.0, int8=0.0),
+      ),
+    )
+    topology.update_node(
+      "node2",
+      DeviceCapabilities(
+        model="Mac Studio",
+        chip="test2",
+        memory=192*1024*1024*1024,
+        flops=DeviceFlops(fp32=0.0, fp16=0.0, int8=0.0),
+      ),
+    )
+    topology.update_node(
+      "node3",
+      DeviceCapabilities(
+        model="MacBook Pro",
+        chip="test3",
+        memory=256*1024*1024*1024,
+        flops=DeviceFlops(fp32=0.0, fp16=0.0, int8=0.0),
+      ),
+    )
+
+    strategy = FlopsWeightedPartitioningStrategy()
+    self.assertRaises(ValueError, strategy.partition, topology)
+
 
 if __name__ == "__main__":
   unittest.main()

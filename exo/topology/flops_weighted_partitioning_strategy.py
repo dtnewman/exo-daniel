@@ -6,10 +6,21 @@ from .partitioning_strategy import Partition
 
 class FlopsWeightedPartitioningStrategy(PartitioningStrategy):
   def partition(self, topology: Topology) -> List[Partition]:
-    nodes = list(topology.all_nodes())
-    nodes.sort(key=lambda x: (-float(x[1].flops.fp32), x[0]))  # Sort by flops in descending order, then by node ID
+    """
+    This strategy partitions the topology by flops, giving priority to nodes
+    with the highest flops. Assumes that at least one node has flops. No 
+    allocation is made for nodes with no flops.
+    """
+    nodes = list(filter(lambda x: x[1].flops.fp32 > 0, topology.all_nodes()))
+
+    if len(nodes) == 0:
+      raise ValueError("No flops found in the topology")
+
+    # Sort by flops in descending order, then memory in descending order, then by node ID
+    nodes.sort(key=lambda x: (-float(x[1].flops.fp32), -float(x[1].memory), x[0]))
 
     total_flops = sum(node[1].flops.fp32 for node in nodes)
+    
     partitions = []
     start = 0
     for i, node in enumerate(nodes):
@@ -17,4 +28,5 @@ class FlopsWeightedPartitioningStrategy(PartitioningStrategy):
       end = 1.0 if is_last_node else round(start + (node[1].flops.fp32/total_flops), 5)
       partitions.append(Partition(node[0], start, end))
       start = end
+      
     return partitions
