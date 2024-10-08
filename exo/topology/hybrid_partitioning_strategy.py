@@ -5,8 +5,6 @@ from .partitioning_strategy import Partition
 
 class HybridPartitioningStrategy(PartitioningStrategy):
     def __init__(self, flops_weight: float = None, memory_weight: float = None):
-
-
         self.flops_weight = flops_weight or (1.00 - memory_weight) if memory_weight is not None else 0.5
         self.memory_weight = memory_weight or (1.00 - self.flops_weight)
 
