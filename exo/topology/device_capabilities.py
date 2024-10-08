@@ -27,7 +27,7 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
-  latency: Optional[Dict[str, float]]  # map of node ids to recent latencies
+  latency: Optional[Dict[str, float]] = {}  # map of node ids to recent latencies
   weight: Optional[float] = None  # used by partitioning strategies
 
   def __str__(self):

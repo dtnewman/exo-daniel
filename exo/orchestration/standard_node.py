@@ -279,7 +279,7 @@ class StandardNode(Node):
         avg_latency = sum(self.latency_measurements[target_peer.id()]) / len(self.latency_measurements[target_peer.id()])
         print(f"Average latency to {target_peer.id()}: {avg_latency} ms")
         # update topology with latency
-        self.topology.nodes[self.id].latency[target_peer.id()] = avg_latency
+        self.topology.update_node_latency(self.id, target_peer.id(), avg_latency)
       else:
         await target_peer.send_prompt(next_shard, tensor_or_prompt, image_str=image_str, request_id=request_id, inference_state=inference_state)
 
@@ -358,8 +358,6 @@ class StandardNode(Node):
       try:
         did_peers_change = await self.update_peers()
         if DEBUG >= 2: print(f"{did_peers_change=}")
-        due_for_collection = did_peers_change or time.time() - self._last_topology_collection_time > 60.0
-        print(f"Due for collection: {due_for_collection}, {time.time() - self._last_topology_collection_time}")
         if did_peers_change or time.time() - self._last_topology_collection_time > 60.0:
           await self.collect_topology()
           self._last_topology_collection_time = time.time()
