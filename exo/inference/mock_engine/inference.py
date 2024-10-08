@@ -25,4 +25,4 @@ class MockInferenceEngine(InferenceEngine):
 
 # Dynamically modify the __name__ attribute of the class so that it acts like the pytorch inference engine.
 # This is necessary so that it can pick up settings related to the pytorch inference engine (e.g., eligible models).
-MockInferenceEngine.__name__ = "PyTorchDynamicShardInferenceEngine"
+MockInferenceEngine.__name__ = "MLXDynamicShardInferenceEngine"
