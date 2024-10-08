@@ -27,16 +27,19 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
-  latency: Optional[Dict[str, float]] = {}  # map of node ids to recent latencies
+  latency: Optional[Dict[str, float]] = None  # map of node ids to recent latencies
   weight: Optional[float] = None  # used by partitioning strategies
 
+  # ... rest of the class remains the same ...
   def __str__(self):
     return f"Model: {self.model}. Chip: {self.chip}. Memory: {self.memory}MB. Flops: {self.flops} Latency Map: {self.latency} Weight: {self.weight}"
 
   def __post_init__(self):
     if isinstance(self.flops, dict):
       self.flops = DeviceFlops(**self.flops)
-
+    if self.latency is None:
+      self.latency = {}
+  
   def to_dict(self):
     return {"model": self.model, "chip": self.chip, "memory": self.memory, "flops": self.flops.to_dict(), "latency": self.latency, "weight": self.weight}
 
