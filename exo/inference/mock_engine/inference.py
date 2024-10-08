@@ -23,11 +23,13 @@ class MockInferenceEngine(InferenceEngine):
         print(f"INFER TENSOR 1 {datetime.datetime.now()}")
         time.sleep(self.sleep_time)
         print(f"INFER TENSOR 2 {datetime.datetime.now()}")
-        next_token = self.response.__next__()
-        next_token2 = self.response.__next__()
-        cached_iids = {"input_ids": self.input_data + [next_token, next_token2]}
-        is_finished = next_token == 128009
-        response = np.array([next_token, next_token2]), json.dumps({"cached_iids": cached_iids}), is_finished
+        response_array = []
+        for i in range(self.throughput):
+            response_array.append(next(self.response, None))
+        response_array = [token for token in response_array if token is not None]
+        cached_iids = {"input_ids": self.input_data + response_array}
+        is_finished = response_array[-1] == 128009
+        response = np.array(response_array), json.dumps({"cached_iids": cached_iids}), is_finished
         print(response)
         return response
 
