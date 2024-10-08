@@ -23,12 +23,12 @@ class RingMemoryWeightedPartitioningStrategy(PartitioningStrategy):
     for node in nodes:
       print(f"{node[0]}: {node[1].memory} {node[1].flops.fp32}")
 
-    total_memory = sum(node[1].memory for node in nodes)
+    # total_memory = sum(node[1].memory for node in nodes)
     total_flops = sum(node[1].flops.fp32 for node in nodes)
     partitions = []
     start = 0
     for i, node in enumerate(nodes):
-      end = 1.0 if i == len(nodes) - 1 else round(start + (node[1].memory/total_memory), 5)
+      end = 1.0 if i == len(nodes) - 1 else round(start + (node[1].flops.fp32/total_flops), 5)
       partitions.append(Partition(node[0], start, end))
       start = end
     return partitions
