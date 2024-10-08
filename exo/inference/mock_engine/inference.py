@@ -23,13 +23,13 @@ class MockInferenceEngine(InferenceEngine):
         print(f"INFER TENSOR 1 {datetime.datetime.now()}")
         time.sleep(self.sleep_time)
         print(f"INFER TENSOR 2 {datetime.datetime.now()}")
-        for _ in range(self.throughput):
-          next_token = self.response.__next__()
-          cached_iids = {"input_ids": self.input_data + [next_token]}
-          is_finished = next_token == 128009
-          response = np.array([next_token]), json.dumps({"cached_iids": cached_iids}), is_finished
-          print(response)
-          yield response
+        next_token = self.response.__next__()
+        next_token2 = self.response.__next__()
+        cached_iids = {"input_ids": self.input_data + [next_token, next_token2]}
+        is_finished = next_token == 128009
+        response = np.array([next_token, next_token2]), json.dumps({"cached_iids": cached_iids}), is_finished
+        print(response)
+        return response
 
 # Dynamically modify the __name__ attribute of the class so that it acts like the pytorch inference engine.
 # This is necessary so that it can pick up settings related to the pytorch inference engine (e.g., eligible models).
