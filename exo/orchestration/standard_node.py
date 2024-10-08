@@ -251,7 +251,8 @@ class StandardNode(Node):
       next_partition: Partition = partitions[next_partition_index]
       next_shard = shards[next_partition_index]
       # if DEBUG >= 2: print(f"Computed next from: {shard}, {self.topology}. Next partition: {next_partition}")
-      print(f"\n\nComputed next from: {shard}, {self.topology}. Next partition: {next_partition}\n\n")
+      print()
+      print(f"\n\nself.id: {self.id}\nComputed next from: {shard}, {self.topology}. \nNext partition: {next_partition}\n\n")
 
       if next_partition.node_id == self.id:
         if isinstance(tensor_or_prompt, np.ndarray):
