@@ -7,7 +7,7 @@ import numpy as np
 
 class MockInferenceEngine(InferenceEngine):
     
-    def __init__(self, input_data: List[int], response: List[int]):
+    def __init__(self, input_data: List[int] = None, response: List[int] = None):
         self.input_data = input_data or [51585, 65267, 53498, 52743, 63954, 61797, 56691, 61758, 60298, 62148, 59485, 57423, 61918, 57683, 49417, 61158, 62351, 52365, 52251]
         self.response = iter(response or [2646, 16926, 1095, 499, 1523, 128009])
 
