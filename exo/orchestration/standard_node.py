@@ -45,6 +45,7 @@ class StandardNode(Node):
     self._on_opaque_status = AsyncCallbackSystem[str, Tuple[str, str]]()
     self._on_opaque_status.register("node_status").on_next(self.on_node_status)
     self.node_download_progress: Dict[str, RepoProgressEvent] = {}
+    self._last_topology_collection_time = time.time()
 
   async def start(self, wait_for_peers: int = 0) -> None:
     await self.server.start()
@@ -273,9 +274,12 @@ class StandardNode(Node):
         elapsed_time_ms = (end_time - start_time) / 1_000_000
         # todo use this for latency measurements
         self.latency_measurements[target_peer.id()].append(elapsed_time_ms)
-        # take the average latency
+        
+        # update the latency dict with the average latency over the last 5 measurements
         avg_latency = sum(self.latency_measurements[target_peer.id()]) / len(self.latency_measurements[target_peer.id()])
         print(f"Average latency to {target_peer.id()}: {avg_latency} ms")
+        # update topology with latency
+        self.topology.nodes[target_peer.id()].latency = avg_latency
         # target_peer.set_node_latency(self.id, avg_latency)
       else:
         await target_peer.send_prompt(next_shard, tensor_or_prompt, image_str=image_str, request_id=request_id, inference_state=inference_state)
@@ -355,8 +359,9 @@ class StandardNode(Node):
       try:
         did_peers_change = await self.update_peers()
         if DEBUG >= 2: print(f"{did_peers_change=}")
-        if did_peers_change:
+        if did_peers_change or time.time() - self._last_topology_collection_time > 60.0:
           await self.collect_topology()
+          self._last_topology_collection_time = time.time()
       except Exception as e:
         print(f"Error collecting topology: {e}")
         traceback.print_exc()
