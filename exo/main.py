@@ -5,7 +5,7 @@ import json
 import time
 import traceback
 import uuid
-import sys
+
 from exo.orchestration.standard_node import StandardNode
 from exo.networking.grpc.grpc_server import GRPCServer
 from exo.networking.udp.udp_discovery import UDPDiscovery
