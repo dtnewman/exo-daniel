@@ -242,6 +242,7 @@ class StandardNode(Node):
     shard = self.get_current_shard(base_shard)
 
     partitions = self.partitioning_strategy.partition(self.topology)
+    print(f"Partitions: {partitions}")
     shards = map_partitions_to_shards(self.partitioning_strategy.partition(self.topology), base_shard.n_layers, base_shard.model_id)
     current_partition_index = next((i for i, p in enumerate(partitions) if p.node_id == self.id), None)
     if DEBUG >= 1: print(f"Current partition index: {current_partition_index}")
@@ -249,7 +250,8 @@ class StandardNode(Node):
       next_partition_index = (current_partition_index+1) % len(partitions)
       next_partition: Partition = partitions[next_partition_index]
       next_shard = shards[next_partition_index]
-      if DEBUG >= 2: print(f"Computed next from: {shard}, {self.topology}. Next partition: {next_partition}")
+      # if DEBUG >= 2: print(f"Computed next from: {shard}, {self.topology}. Next partition: {next_partition}")
+      print(f"Computed next from: {shard}, {self.topology}. Next partition: {next_partition}")
 
       if next_partition.node_id == self.id:
         if isinstance(tensor_or_prompt, np.ndarray):
