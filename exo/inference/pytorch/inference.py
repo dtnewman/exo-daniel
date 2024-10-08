@@ -167,6 +167,8 @@ class PyTorchDynamicShardInferenceEngine(InferenceEngine):
     if DEBUG >= 4:
       print(f"return_values: {return_values}")
 
+    print(f"return_values: {return_values}")
+
     return return_values
 
   async def infer_tensor(
