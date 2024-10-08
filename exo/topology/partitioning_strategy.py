@@ -36,5 +36,5 @@ def map_partitions_to_shards(partitions: List[Partition], num_layers: int, model
   # Ensure full coverage
   if shards and shards[-1].end_layer < num_layers - 1:
     shards[-1] = Shard(model_id, shards[-1].start_layer, num_layers - 1, num_layers)
-
+  print(f"shards: {shards}")
   return shards
