@@ -29,11 +29,11 @@ class MockInferenceEngine(InferenceEngine):
     async def infer_tensor(self, request_id: str, shard: Shard, input_data: np.ndarray, inference_state: Optional[str] = None) -> Tuple[np.ndarray, str, bool]:
         time.sleep(1 / self.throughput)
         next_token = next(self.response, None)
-        if next_token is None:
-            next_token = 128009
-            
+
         cached_iids = {"input_ids": self.input_data + [next_token]}
         is_finished = next_token == 128009
+        if is_finished:
+            self.reset_response()
         response = np.array([next_token]), json.dumps({"cached_iids": cached_iids}), is_finished
         print(f"\nresponse: {response}")
         return response
