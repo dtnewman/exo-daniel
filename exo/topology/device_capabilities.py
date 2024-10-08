@@ -1,3 +1,4 @@
+from typing import Optional
 from exo import DEBUG
 from dataclasses import dataclass, asdict
 import subprocess
@@ -26,16 +27,17 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
+  weight: Optional[float] = None  # used by partitioning strategies
 
   def __str__(self):
-    return f"Model: {self.model}. Chip: {self.chip}. Memory: {self.memory}MB. Flops: {self.flops}"
+    return f"Model: {self.model}. Chip: {self.chip}. Memory: {self.memory}MB. Flops: {self.flops} Weight: {self.weight}"
 
   def __post_init__(self):
     if isinstance(self.flops, dict):
       self.flops = DeviceFlops(**self.flops)
 
   def to_dict(self):
-    return {"model": self.model, "chip": self.chip, "memory": self.memory, "flops": self.flops.to_dict()}
+    return {"model": self.model, "chip": self.chip, "memory": self.memory, "flops": self.flops.to_dict(), "weight": self.weight}
 
 
 UNKNOWN_DEVICE_CAPABILITIES = DeviceCapabilities(model="Unknown Model", chip="Unknown Chip", memory=0, flops=DeviceFlops(fp32=0, fp16=0, int8=0))
@@ -57,10 +59,10 @@ CHIP_FLOPS = {
   "apple m3 pro": DeviceFlops(fp32=4.97*TFLOPS, fp16=9.94*TFLOPS, int8=19.88*TFLOPS),
   "apple m4": DeviceFlops(fp32=3.55*TFLOPS, fp16=7.10*TFLOPS, int8=14.20*TFLOPS),
   ### A chips
-  "apple a13": DeviceFlops(fp32=0.69*TFLOPS, fp16=1.38*TFLOPS, int8=2.76*TFLOPS),
-  "apple a14": DeviceFlops(fp32=0.75*TFLOPS, fp16=1.50*TFLOPS, int8=3.00*TFLOPS),
-  "apple a15": DeviceFlops(fp32=1.37*TFLOPS, fp16=2.74*TFLOPS, int8=5.48*TFLOPS),
-  "apple a16": DeviceFlops(fp32=1.79*TFLOPS, fp16=3.58*TFLOPS, int8=7.16*TFLOPS),
+  "apple a13 bionic": DeviceFlops(fp32=0.69*TFLOPS, fp16=1.38*TFLOPS, int8=2.76*TFLOPS),
+  "apple a14 bionic": DeviceFlops(fp32=0.75*TFLOPS, fp16=1.50*TFLOPS, int8=3.00*TFLOPS),
+  "apple a15 bionic": DeviceFlops(fp32=1.37*TFLOPS, fp16=2.74*TFLOPS, int8=5.48*TFLOPS),
+  "apple a16 bionic": DeviceFlops(fp32=1.79*TFLOPS, fp16=3.58*TFLOPS, int8=7.16*TFLOPS),
   "apple a17 pro": DeviceFlops(fp32=2.15*TFLOPS, fp16=4.30*TFLOPS, int8=8.60*TFLOPS),
   ### NVIDIA GPUs
   # RTX 40 series
@@ -102,6 +104,7 @@ CHIP_FLOPS = {
   "nvidia a40 48gb pcie": DeviceFlops(fp32=37.4*TFLOPS, fp16=149.7*TFLOPS, int8=299.3*TFLOPS),
   "nvidia a100 40gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
   "nvidia a100 80gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
+<<<<<<< HEAD
   "nvidia a800 40gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
   "nvidia a100 80gb sxm": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
   "nvidia a800 80gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
@@ -111,6 +114,17 @@ CHIP_FLOPS = {
   "quadro m4000": DeviceFlops(fp32=2.5 * TFLOPS, fp16=5.0 * TFLOPS, int8=10.0 * TFLOPS),
   "quadro m2000": DeviceFlops(fp32=0.5 * TFLOPS, fp16=1.0 * TFLOPS, int8=2.0 * TFLOPS),
   "quadro p400": DeviceFlops(fp32=0.641 * TFLOPS, fp16=1.282 * TFLOPS, int8=2.564 * TFLOPS),
+=======
+  "nvidia a100 80gb sxm": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
+  "nvidia a800 40gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
+  "nvidia a800 80gb pcie": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
+  "nvidia a800 80gb sxm": DeviceFlops(fp32=19.5*TFLOPS, fp16=312.0*TFLOPS, int8=624.0*TFLOPS),
+  "nvidia t1000 8gb": DeviceFlops(fp32=2.5 * TFLOPS, fp16=5.0 * TFLOPS, int8=10.0 * TFLOPS),
+  "quadro m2000": DeviceFlops(fp32=0.5 * TFLOPS, fp16=1.0 * TFLOPS, int8=2.0 * TFLOPS),
+  "quadro m4000": DeviceFlops(fp32=2.5 * TFLOPS, fp16=5.0 * TFLOPS, int8=10.0 * TFLOPS),
+  "quadro p400": DeviceFlops(fp32=0.641 * TFLOPS, fp16=1.282 * TFLOPS, int8=2.564 * TFLOPS),
+  "quadro p6000": DeviceFlops(fp32=12.5 * TFLOPS, fp16=25.0 * TFLOPS, int8=50.0 * TFLOPS),
+>>>>>>> dn/284-partitioning-strategy
   # ... add more devices if needed ...
   ### AMD GPUs
   # RX 6000 series
@@ -167,7 +181,10 @@ def mac_device_capabilities() -> DeviceCapabilities:
     memory = memory_value
 
   # Assuming static values for other attributes for demonstration
+<<<<<<< HEAD
   foo = "BAR"
+=======
+>>>>>>> dn/284-partitioning-strategy
   return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)))
 
 

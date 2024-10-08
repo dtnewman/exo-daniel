@@ -36,7 +36,7 @@ Activation Lock Status: Enabled
     self.assertEqual(result.memory, 131072)  # 16 GB in MB
     self.assertEqual(
       str(result),
-      "Model: MacBook Pro. Chip: Apple M3 Max. Memory: 131072MB. Flops: 14.20 TFLOPS, fp16: 28.40 TFLOPS, int8: 56.80 TFLOPS",
+      "Model: MacBook Pro. Chip: Apple M3 Max. Memory: 131072MB. Flops: fp32: 14.20 TFLOPS, fp16: 28.40 TFLOPS, int8: 56.80 TFLOPS",
     )
 
   @patch("subprocess.check_output")
