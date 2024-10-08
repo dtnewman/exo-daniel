@@ -279,8 +279,7 @@ class StandardNode(Node):
         avg_latency = sum(self.latency_measurements[target_peer.id()]) / len(self.latency_measurements[target_peer.id()])
         print(f"Average latency to {target_peer.id()}: {avg_latency} ms")
         # update topology with latency
-        self.topology.nodes[target_peer.id()].latency = avg_latency
-        # target_peer.set_node_latency(self.id, avg_latency)
+        self.topology.nodes[self.id].latency[target_peer.id()] = avg_latency
       else:
         await target_peer.send_prompt(next_shard, tensor_or_prompt, image_str=image_str, request_id=request_id, inference_state=inference_state)
 
