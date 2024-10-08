@@ -29,7 +29,7 @@ class MockInferenceEngine(InferenceEngine):
           is_finished = next_token == 128009
           response = np.array([next_token]), json.dumps({"cached_iids": cached_iids}), is_finished
           print(response)
-          return response
+          yield response
 
 # Dynamically modify the __name__ attribute of the class so that it acts like the pytorch inference engine.
 # This is necessary so that it can pick up settings related to the pytorch inference engine (e.g., eligible models).
