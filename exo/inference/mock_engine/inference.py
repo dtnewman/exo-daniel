@@ -13,9 +13,11 @@ class MockInferenceEngine(InferenceEngine):
         self.throughput = throughput
     async def infer_prompt(self, request_id: str, shard: Shard, prompt: str, image_str: Optional[str] = None, inference_state: Optional[str] = None) -> Tuple[np.ndarray, str, bool]:
         array = self.input_data
+        print("INFER PROMPT")
         return np.array(array), json.dumps({"start_pos": 0, "n_captured_toks": len(array)}), False
 
     async def infer_tensor(self, request_id: str, shard: Shard, input_data: np.ndarray, inference_state: Optional[str] = None) -> Tuple[np.ndarray, str, bool]:
+        print("INFER TENSOR")
         for _ in range(self.throughput):
           next_token = self.response.__next__()
           cached_iids = {"input_ids": self.input_data + [next_token]}
