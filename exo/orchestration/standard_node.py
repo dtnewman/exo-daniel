@@ -250,11 +250,12 @@ class StandardNode(Node):
       next_partition_index = (current_partition_index+1) % len(partitions)
       next_partition: Partition = partitions[next_partition_index]
       next_shard = shards[next_partition_index]
-      # if DEBUG >= 2: print(f"Computed next from: {shard}, {self.topology}. Next partition: {next_partition}")
+      if DEBUG >= 2: print(f"Computed next from: {shard}, {self.topology}. Next partition: {next_partition}")
       print()
       print(f"\n\nself.id: {self.id}\nComputed next from: {shard}, {self.topology}. \nNext partition: {next_partition}\n\n")
 
       if next_partition.node_id == self.id:
+        print(f"\n\nDANIEL 1 self.id: {self.id}\nNext partition: {next_partition}\n\n")
         if isinstance(tensor_or_prompt, np.ndarray):
           await self.process_tensor(shard, tensor_or_prompt, request_id, inference_state=inference_state)
         else:
