@@ -88,13 +88,16 @@ partitioning_strategies = {
   "memory": RingMemoryWeightedPartitioningStrategy(),
   "hybrid": HybridPartitioningStrategy()
 }
+partitioning_strategy = partitioning_strategies[args.partitioning_strategy]
+if DEBUG >= 1:
+  print(f"Using partitioning strategy: {partitioning_strategy.__class__.__name__}")
 
 node = StandardNode(
   args.node_id,
   None,
   inference_engine,
   discovery,
-  partitioning_strategy=partitioning_strategies[args.partitioning_strategy],
+  partitioning_strategy=partitioning_strategy,
   max_generate_tokens=args.max_generate_tokens,
   topology_viz=topology_viz
 )
