@@ -35,7 +35,7 @@ class HybridPartitioningStrategy(PartitioningStrategy):
             node[1].weight = normalized_flops * self.flops_weight + normalized_memory * self.memory_weight
 
         # Sort by weight in descending order, then by node ID
-        nodes.sort(key=lambda x: (-float(x[1].weight), -x[0]))
+        nodes.sort(key=lambda x: (-float(x[1].weight), x[0]), reverse=True)
 
         total_weight = sum(node[1].weight for node in nodes)
 
