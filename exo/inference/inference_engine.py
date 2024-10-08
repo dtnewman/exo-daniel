@@ -16,7 +16,7 @@ class InferenceEngine(ABC):
     pass
 
 
-def get_inference_engine(inference_engine_name: str, shard_downloader: 'ShardDownloader', mock_inference_engine_latency: float = 1, mock_inference_engine_throughput: int = 1):
+def get_inference_engine(inference_engine_name: str, shard_downloader: 'ShardDownloader', mock_inference_engine_latency: float = 1):
   if inference_engine_name == "mlx":
     from exo.inference.mlx.sharded_inference_engine import MLXDynamicShardInferenceEngine
 
@@ -33,6 +33,6 @@ def get_inference_engine(inference_engine_name: str, shard_downloader: 'ShardDow
   elif inference_engine_name == "mock":
     from exo.inference.mock_engine.inference import MockInferenceEngine
 
-    return MockInferenceEngine(throughput=mock_inference_engine_throughput, latency=mock_inference_engine_latency)
+    return MockInferenceEngine(latency=mock_inference_engine_latency)
   else:
     raise ValueError(f"Inference engine {inference_engine_name} not supported")

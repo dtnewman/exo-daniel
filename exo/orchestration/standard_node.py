@@ -265,7 +265,13 @@ class StandardNode(Node):
       if DEBUG >= 1: print(f"Sending tensor_or_prompt to {target_peer.id()}: {tensor_or_prompt}")
 
       if isinstance(tensor_or_prompt, np.ndarray):
+        start_time = time.perf_counter_ns()
         await target_peer.send_tensor(next_shard, tensor_or_prompt, request_id=request_id, inference_state=inference_state)
+        end_time = time.perf_counter_ns()
+        elapsed_time_ms = (end_time - start_time) / 1_000_000
+        # todo use this for latency measurements
+
+        
       else:
         await target_peer.send_prompt(next_shard, tensor_or_prompt, image_str=image_str, request_id=request_id, inference_state=inference_state)
 

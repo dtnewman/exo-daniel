@@ -1,8 +1,9 @@
-from typing import Optional
-from exo import DEBUG
+from collections import deque
 from dataclasses import dataclass, asdict
-import subprocess
 import psutil
+import subprocess
+from typing import Deque, Optional
+from exo import DEBUG
 
 TFLOPS = 1.00
 
@@ -27,6 +28,7 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
+  latency: Deque[float] = deque(maxlen=5)  # keeps track of recent latencies
   weight: Optional[float] = None  # used by partitioning strategies
 
   def __str__(self):
