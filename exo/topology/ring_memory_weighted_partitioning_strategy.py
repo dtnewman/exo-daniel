@@ -13,7 +13,8 @@ class RingMemoryWeightedPartitioningStrategy(PartitioningStrategy):
     # nodes.sort(key=lambda x: (-x[1].memory, x[0]))  # Sort by memory in descending order, then by node ID
     # 14.35/6.2/252
     # 9.34/2.7/124
-    nodes.sort(key=lambda x: (-x[1].flops.fp32, x[0]))  # Sort by memory in descending order, then by node ID
+    
+    nodes.sort(key=lambda x: (-float(x[1].flops.fp32), x[0]))  # Sort by memory in descending order, then by node ID
     
 
     
