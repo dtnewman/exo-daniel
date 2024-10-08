@@ -28,7 +28,7 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
-  latency: Deque[float] = deque(maxlen=5)  # keeps track of recent latencies
+  latency: float
   weight: Optional[float] = None  # used by partitioning strategies
 
   def __str__(self):
