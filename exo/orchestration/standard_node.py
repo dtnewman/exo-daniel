@@ -359,6 +359,8 @@ class StandardNode(Node):
       try:
         did_peers_change = await self.update_peers()
         if DEBUG >= 2: print(f"{did_peers_change=}")
+        due_for_collection = did_peers_change or time.time() - self._last_topology_collection_time > 60.0
+        print(f"Due for collection: {due_for_collection}, {time.time() - self._last_topology_collection_time}")
         if did_peers_change or time.time() - self._last_topology_collection_time > 60.0:
           await self.collect_topology()
           self._last_topology_collection_time = time.time()
