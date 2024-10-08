@@ -36,7 +36,6 @@ class HybridPartitioningStrategy(PartitioningStrategy):
 
         # Sort by weight in descending order, then by node ID
         latencies = {node[0]: node[1].latency for node in nodes}
-        print(f"\n\nlatencies: {latencies}\n\n")
         nodes.sort(key=lambda x: (-float(x[1].weight), x[1].latency, x[0]), reverse=True)
 
         total_weight = sum(node[1].weight for node in nodes)
