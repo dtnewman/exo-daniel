@@ -12,15 +12,15 @@ class TestFlopsWeightedPartitioningStrategy(unittest.TestCase):
     topology = Topology()
     topology.update_node(
       "node1",
-      DeviceCapabilities(model="test1", chip="test1", memory=3000, flops=DeviceFlops(fp32=4.0, fp16=8.0, int8=16.0)),
+      DeviceCapabilities(model="test1", chip="test1", memory=3000, flops=DeviceFlops(fp32=4.0, fp16=8.0, int8=16.0), latency={}, weight=None),
     )
     topology.update_node(
       "node2",
-      DeviceCapabilities(model="test2", chip="test2", memory=1000, flops=DeviceFlops(fp32=1.0, fp16=2.0, int8=4.0)),
+      DeviceCapabilities(model="test2", chip="test2", memory=1000, flops=DeviceFlops(fp32=1.0, fp16=2.0, int8=4.0), latency={}, weight=None),
     )
     topology.update_node(
       "node3",
-      DeviceCapabilities(model="test3", chip="test3", memory=6000, flops=DeviceFlops(fp32=10.0, fp16=20.0, int8=40.0)),
+      DeviceCapabilities(model="test3", chip="test3", memory=6000, flops=DeviceFlops(fp32=10.0, fp16=20.0, int8=40.0), latency={}, weight=None),
     )
     topology.add_edge("node1", "node2")
     topology.add_edge("node2", "node3")

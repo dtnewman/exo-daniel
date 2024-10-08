@@ -1,8 +1,7 @@
-from collections import deque
 from dataclasses import dataclass, asdict
 import psutil
 import subprocess
-from typing import Deque, Optional
+from typing import Dict, Optional
 from exo import DEBUG
 
 TFLOPS = 1.00
@@ -28,21 +27,21 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
-  latency: Optional[float] = None  # keeps track of recent latencies
+  latency: Optional[Dict[str, float]]  # map of node ids to recent latencies
   weight: Optional[float] = None  # used by partitioning strategies
 
   def __str__(self):
-    return f"Model: {self.model}. Chip: {self.chip}. Memory: {self.memory}MB. Flops: {self.flops} Weight: {self.weight}"
+    return f"Model: {self.model}. Chip: {self.chip}. Memory: {self.memory}MB. Flops: {self.flops} Latency Map: {self.latency} Weight: {self.weight}"
 
   def __post_init__(self):
     if isinstance(self.flops, dict):
       self.flops = DeviceFlops(**self.flops)
 
   def to_dict(self):
-    return {"model": self.model, "chip": self.chip, "memory": self.memory, "flops": self.flops.to_dict(), "weight": self.weight}
+    return {"model": self.model, "chip": self.chip, "memory": self.memory, "flops": self.flops.to_dict(), "latency": self.latency, "weight": self.weight}
 
 
-UNKNOWN_DEVICE_CAPABILITIES = DeviceCapabilities(model="Unknown Model", chip="Unknown Chip", memory=0, flops=DeviceFlops(fp32=0, fp16=0, int8=0))
+UNKNOWN_DEVICE_CAPABILITIES = DeviceCapabilities(model="Unknown Model", chip="Unknown Chip", memory=0, flops=DeviceFlops(fp32=0, fp16=0, int8=0), latency={}, weight=None)
 
 CHIP_FLOPS = {
   # Source: https://www.cpu-monkey.com
@@ -151,6 +150,8 @@ def device_capabilities() -> DeviceCapabilities:
       chip="Unknown Chip",
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
+      latency={},
+      weight=None,
     )
 
 
@@ -171,7 +172,7 @@ def mac_device_capabilities() -> DeviceCapabilities:
     memory = memory_value
 
   # Assuming static values for other attributes for demonstration
-  return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)))
+  return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)), latency={}, weight=None)
 
 
 def linux_device_capabilities() -> DeviceCapabilities:
@@ -194,6 +195,8 @@ def linux_device_capabilities() -> DeviceCapabilities:
       chip=gpu_name,
       memory=gpu_memory_info.total // 2**20,
       flops=CHIP_FLOPS.get(gpu_name.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)),
+      latency={},
+      weight=None,
     )
   elif Device.DEFAULT == "AMD":
     # TODO AMD support
@@ -202,6 +205,8 @@ def linux_device_capabilities() -> DeviceCapabilities:
       chip="Unknown AMD",
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
+      latency={},
+      weight=None,
     )
   else:
     return DeviceCapabilities(
@@ -209,4 +214,6 @@ def linux_device_capabilities() -> DeviceCapabilities:
       chip=f"Unknown Chip (Device: {Device.DEFAULT})",
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
+      latency={},
+      weight=None,
     )
