@@ -10,17 +10,20 @@ class RingMemoryWeightedPartitioningStrategy(PartitioningStrategy):
     # nodes.sort(key=lambda x: (x[1].memory, x[0]))  # Sort by memory in ascending order, then by node ID
     # 15.39/3.3/154
     # 8.92/5.6/330
-    nodes.sort(key=lambda x: (-x[1].memory, x[0]))  # Sort by memory in descending order, then by node ID
+    # nodes.sort(key=lambda x: (-x[1].memory, x[0]))  # Sort by memory in descending order, then by node ID
     # 14.35/6.2/252
     # 9.34/2.7/124
+    nodes.sort(key=lambda x: (-x[1].flops.fp32, x[0]))  # Sort by memory in descending order, then by node ID
+    
 
     
   
     print('nodes:')
     for node in nodes:
-      print(f"{node[0]}: {node[1].memory} {node[1].flops}")
+      print(f"{node[0]}: {node[1].memory} {node[1].flops.fp32}")
 
     total_memory = sum(node[1].memory for node in nodes)
+    total_flops = sum(node[1].flops for node in nodes)
     partitions = []
     start = 0
     for i, node in enumerate(nodes):
