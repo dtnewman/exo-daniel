@@ -50,8 +50,8 @@ parser.add_argument("--prompt", type=str, help="Prompt for the model when using 
 parser.add_argument("--tailscale-api-key", type=str, default=None, help="Tailscale API key")
 parser.add_argument("--tailnet-name", type=str, default=None, help="Tailnet name")
 parser.add_argument("--partitioning-strategy", type=str, choices=["flops", "memory", "hybrid"], default="hybrid", help="Partitioning strategy to use")
-parser.add_argument("--mock-inference-engine-latency", type=float, default=1, help="Latency for mock inference engine")
-parser.add_argument("--mock-inference-engine-throughput", type=int, default=1, help="Throughput for mock inference engine")
+parser.add_argument("--mock-inference-engine-latency", type=float, default=1.0, help="Latency for mock inference engine")
+parser.add_argument("--mock-inference-engine-throughput", type=float, default=1.0, help="Throughput for mock inference engine")
 args = parser.parse_args()
 
 print_yellow_exo()
