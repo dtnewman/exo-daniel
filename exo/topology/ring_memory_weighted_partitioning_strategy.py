@@ -8,9 +8,7 @@ class RingMemoryWeightedPartitioningStrategy(PartitioningStrategy):
   def partition(self, topology: Topology) -> List[Partition]:
     nodes = list(topology.all_nodes())
     nodes.sort(key=lambda x: (x[1].memory, x[0]), reverse=True)  # Sort by memory in descending order, then by node ID
-    # print('nodes:')
-    # for node in nodes:
-    #   print(f"{node[0]}: {node[1].memory}")
+
     total_memory = sum(node[1].memory for node in nodes)
     partitions = []
     start = 0
@@ -19,8 +17,4 @@ class RingMemoryWeightedPartitioningStrategy(PartitioningStrategy):
       partitions.append(Partition(node[0], start, end))
       start = end
     
-    partitions = [
-      Partition(nodes[0][0], 0.0, 0.1),
-      Partition(nodes[1][0], 0.1, 1.0),
-    ] if len(nodes) > 1 else [Partition(nodes[0][0], 0.0, 1.0)]
     return partitions
