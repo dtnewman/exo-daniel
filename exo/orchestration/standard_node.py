@@ -405,6 +405,7 @@ class StandardNode(Node):
     self.topology = next_topology
     if self.topology_viz:
       self.topology_viz.update_visualization(self.current_topology, self.partitioning_strategy.partition(self.current_topology), self.id)
+    print(f"Collected topology: {next_topology}")
     return next_topology
 
   @property
