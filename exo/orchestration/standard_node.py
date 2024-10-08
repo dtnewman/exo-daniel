@@ -257,9 +257,17 @@ class StandardNode(Node):
       if next_partition.node_id == self.id:
         print(f"\n\nDANIEL 1 self.id: {self.id}\nNext partition: {next_partition}\n\n")
         if isinstance(tensor_or_prompt, np.ndarray):
+          start_time = time.perf_counter_ns()
           await self.process_tensor(shard, tensor_or_prompt, request_id, inference_state=inference_state)
+          end_time = time.perf_counter_ns()
+          elapsed_time_ns = end_time - start_time
+          print(f"\n\nDANIEL 2 elapsed_time_ns: {elapsed_time_ns}\n\n")
         else:
+          start_time = time.perf_counter_ns()
           await self.process_prompt(shard, tensor_or_prompt, image_str, request_id, inference_state=inference_state)
+          end_time = time.perf_counter_ns()
+          elapsed_time_ns = end_time - start_time
+          print(f"\n\nDANIEL 3 elapsed_time_ns: {elapsed_time_ns}\n\n")
         return
 
       target_peer = next((p for p in self.peers if p.id() == next_partition.node_id), None)
