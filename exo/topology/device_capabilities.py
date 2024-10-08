@@ -27,6 +27,7 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
+  latency: float = 0.0
   weight: Optional[float] = None  # used by partitioning strategies
 
   def __str__(self):

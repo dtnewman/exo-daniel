@@ -283,6 +283,7 @@ class StandardNode(Node):
         end_time = time.perf_counter_ns()
         elapsed_time_ns = end_time - start_time
         print(f"\n\nDANIEL 4 elapsed_time_ns: {elapsed_time_ns}\n\n")
+        self.topology.nodes[target_peer.id()].latency = elapsed_time_ns
       else:
         start_time = time.perf_counter_ns()
         await target_peer.send_prompt(next_shard, tensor_or_prompt, image_str=image_str, request_id=request_id, inference_state=inference_state)
