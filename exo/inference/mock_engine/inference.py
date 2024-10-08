@@ -30,8 +30,8 @@ class MockInferenceEngine(InferenceEngine):
         time.sleep(1 / self.throughput)
         next_token = next(self.response, None)
         if next_token is None:
-            self.reset_response()
-            next_token = next(self.response, None)
+            next_token = 128009
+            
         cached_iids = {"input_ids": self.input_data + [next_token]}
         is_finished = next_token == 128009
         response = np.array([next_token]), json.dumps({"cached_iids": cached_iids}), is_finished
