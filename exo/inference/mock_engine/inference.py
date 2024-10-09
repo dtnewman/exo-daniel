@@ -8,6 +8,9 @@ import time
 import datetime
 
 class MockInferenceEngine(InferenceEngine):
+    """
+    Mock inference engine for testing and development.
+    """
     
     def __init__(self, input_data: List[int] = None, response: List[int] = None, latency: float = 1):
         # default_response = never gonna let you down

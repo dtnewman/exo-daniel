@@ -27,6 +27,10 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
+  # TODO: this is a WIP. Need calculate latency with a simple ping 
+  # and store in the edges and then calculate a different variable for 
+  # length of time it takes to respond to a request with the first token.
+  # Keep track of that on the nodes themselves.
   latency: Optional[Dict[str, float]] = None  # map of node ids to recent latencies
   weight: Optional[float] = None  # used by partitioning strategies
 

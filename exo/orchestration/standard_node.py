@@ -272,7 +272,8 @@ class StandardNode(Node):
         await target_peer.send_tensor(next_shard, tensor_or_prompt, request_id=request_id, inference_state=inference_state)
         end_time = time.perf_counter_ns()
         elapsed_time_ms = (end_time - start_time) / 1_000_000
-        # todo use this for latency measurements
+        
+        # todo: WIP, calculate and store this on the node itself, rather than in the request to the node
         self.latency_measurements[target_peer.id()].append(elapsed_time_ms)
         
         # update the latency dict with the average latency over the last 5 measurements
@@ -358,6 +359,7 @@ class StandardNode(Node):
       try:
         did_peers_change = await self.update_peers()
         if DEBUG >= 2: print(f"{did_peers_change=}")
+        # TODO: this about whether this should be done periodically, or just at the end of a request
         if did_peers_change or time.time() - self._last_topology_collection_time > 60.0:
           await self.collect_topology()
           self._last_topology_collection_time = time.time()
