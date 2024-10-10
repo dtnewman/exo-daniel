@@ -100,7 +100,6 @@ class StandardNode(Node):
     resp = await self._process_prompt(base_shard, prompt, image_str, request_id, inference_state)
     end_time = time.perf_counter_ns()
     elapsed_time_ns = end_time - start_time
-    print(f"DANIEL!!! [{request_id}] elapsed time: {elapsed_time_ns} ns")
     asyncio.create_task(
       self.broadcast_opaque_status(
         request_id,
@@ -138,6 +137,7 @@ class StandardNode(Node):
     is_finished = is_finished or len(self.buffered_token_output[request_id][0]) >= self.max_generate_tokens
     if is_finished:
       self.buffered_token_output[request_id] = (self.buffered_token_output[request_id][0], True)
+      print(f"Node {self.id} finished processing prompt for request {request_id}")  # Add this line
     asyncio.create_task(self.broadcast_result(request_id, self.buffered_token_output[request_id][0], is_finished))  # TODO: this is n^2 communication complexity
 
     if result.size == 1:
@@ -222,6 +222,7 @@ class StandardNode(Node):
       is_finished = is_finished or len(self.buffered_token_output[request_id][0]) >= self.max_generate_tokens
       if is_finished:
         self.buffered_token_output[request_id] = (self.buffered_token_output[request_id][0], True)
+        print(f"Node {self.id} finished processing request {request_id}")  # Add this line
       asyncio.create_task(self.broadcast_result(request_id, self.buffered_token_output[request_id][0], is_finished))  # TODO: this is n^2 communication complexity
 
       if result.size == 1:  # we got a new token out
