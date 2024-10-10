@@ -31,6 +31,10 @@ class Node(ABC):
   async def collect_topology(self, visited: set[str] = set(), max_depth: int = 2) -> Topology:
     pass
 
+  @abstractmethod
+  async def send_completion_finished(self, request_id: str) -> None:
+    pass
+
   @property
   @abstractmethod
   def current_topology(self) -> Topology:

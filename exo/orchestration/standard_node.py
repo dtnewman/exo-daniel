@@ -58,6 +58,11 @@ class StandardNode(Node):
     await self.discovery.stop()
     await self.server.stop()
 
+  async def send_completion_finished(self, request_id: str) -> None:
+    print(f"Node {self.id} finished processing request {request_id}")
+    for peer in self.peers:
+      await peer.send_completion_finished(request_id)
+
   def on_node_status(self, request_id, opaque_status):
     try:
       status_data = json.loads(opaque_status)

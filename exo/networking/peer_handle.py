@@ -53,3 +53,7 @@ class PeerHandle(ABC):
   @abstractmethod
   async def collect_topology(self, visited: set[str], max_depth: int) -> Topology:
     pass
+
+  @abstractmethod
+  async def send_completion_finished(self, request_id: str) -> None:
+    pass
