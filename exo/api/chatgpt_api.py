@@ -168,6 +168,8 @@ class ChatGPTAPI:
     self.stream_tasks: Dict[str, asyncio.Task] = {}
     self.previous_request_time: Optional[float] = None
     self.previous_request_tokens: Optional[int] = None
+    self.prev_weights = None
+    self.weights = None
 
     cors = aiohttp_cors.setup(self.app)
     cors_options = aiohttp_cors.ResourceOptions(
@@ -258,8 +260,10 @@ class ChatGPTAPI:
     # broadcast that the request is started to all peers
     await self.node.send_completion_started(request_id)
 
-    # print out topology
-    print(f"Current topology: {self.node.topology}")
+    print(f"Current topology: {self.node.current_topology}")
+    current_weights = sorted(self.node.current_topology.nodes.items(), key=lambda x: x[0]) # sort by node id
+    print(f"Current weights: {current_weights}")
+    self.weights = {node_id: weight for node_id, weight in current_weights}
 
     if self.on_chat_completion_request:
       try:
@@ -341,6 +345,7 @@ class ChatGPTAPI:
 
 
         _, tokens, _ = await callback.wait(on_result, timeout=self.response_timeout)
+        print(f"Received tokens: {tokens}")
         if request_id in self.stream_tasks:  # in case there is still a stream task running, wait for it to complete
           if DEBUG >= 2: print("Pending stream task. Waiting for stream task to complete.")
           try:

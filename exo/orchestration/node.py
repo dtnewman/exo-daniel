@@ -35,6 +35,14 @@ class Node(ABC):
   async def send_completion_started(self, request_id: str) -> None:
     pass
 
+  @abstractmethod
+  async def send_completion_finished(self, request_id: str) -> None:
+    pass
+
+  @abstractmethod
+  async def on_completion_started(self, request_id: str) -> None:
+    pass
+
   @property
   @abstractmethod
   def current_topology(self) -> Topology:
