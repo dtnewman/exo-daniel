@@ -61,7 +61,10 @@ class StandardNode(Node):
   async def send_completion_started(self, request_id: str) -> None:
     print(f"Node {self.id} started processing a request {request_id}")
     for peer in self.peers:
-      await peer.send_completion_started(request_id)
+      try:
+        await peer.send_completion_started(request_id)
+      except Exception as e:
+        print(f"Error sending completion started to peer {peer.id}: {e}")
     
 
     if len(self.processing_times) >= 5:
