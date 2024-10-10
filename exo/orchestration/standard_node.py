@@ -60,10 +60,22 @@ class StandardNode(Node):
 
   async def send_completion_started(self, request_id: str) -> None:
     print(f"Node {self.id} started processing a request {request_id}")
-    print(f"Sending data to {self.peers}")
     for peer in self.peers:
-      print(f"Sending completion started to {peer.id()}")
       await peer.send_completion_started(request_id)
+
+    avg_processing_time = sum(self.processing_times) / len(self.processing_times)
+    if len(self.processing_times) >= 5:
+      # only update the processing time if we have more than 5 or more measurements
+      self.topology.update_avg_processing_time(self.id, avg_processing_time)
+
+  async def on_completion_started(self, request_id: str) -> None:
+    print(f"Received a new completion started event for {request_id=}")
+
+    # update processing times in topology
+    avg_processing_time = sum(self.processing_times) / len(self.processing_times)
+    if len(self.processing_times) >= 5:
+      # only update the processing time if we have more than 5 or more measurements
+      self.topology.update_avg_processing_time(self.id, avg_processing_time)
 
   def on_node_status(self, request_id, opaque_status):
     try:
@@ -189,10 +201,7 @@ class StandardNode(Node):
 
     # Calculate and update the average processing time over the last 10 measurements
     self.processing_times.append(elapsed_time_ns)
-    avg_processing_time = sum(self.processing_times) / len(self.processing_times)
-    if len(self.processing_times) >= 5:
-      # only update the processing time if we have more than 5 or more measurements
-      self.topology.update_avg_processing_time(self.id, avg_processing_time)
+    
     asyncio.create_task(
       self.broadcast_opaque_status(
         request_id,
