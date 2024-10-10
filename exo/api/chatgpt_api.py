@@ -1,10 +1,11 @@
+from collections import deque
 import uuid
 import time
 import asyncio
 import json
 from pathlib import Path
 from transformers import AutoTokenizer
-from typing import List, Literal, Union, Dict
+from typing import Deque, List, Literal, Optional, Union, Dict
 from aiohttp import web
 import aiohttp_cors
 import traceback
@@ -156,7 +157,7 @@ class PromptSession:
 
 
 class ChatGPTAPI:
-  def __init__(self, node: Node, inference_engine_classname: str, response_timeout: int = 90, on_chat_completion_request: Callable[[str, ChatCompletionRequest, str], None] = None):
+  def __init__(self, node: Node, inference_engine_classname: str, response_timeout: int = 90, on_chat_completion_request: Callable[[str, ChatCompletionRequest, str], None] = None, is_using_adaptive_partitioning: bool = False):
     self.node = node
     self.inference_engine_classname = inference_engine_classname
     self.response_timeout = response_timeout
@@ -165,6 +166,9 @@ class ChatGPTAPI:
     self.prompts: PrefixDict[str, PromptSession] = PrefixDict()
     self.prev_token_lens: Dict[str, int] = {}
     self.stream_tasks: Dict[str, asyncio.Task] = {}
+    self.previous_request_time: Optional[float] = None
+    self.previous_request_tokens: Optional[int] = None
+
     cors = aiohttp_cors.setup(self.app)
     cors_options = aiohttp_cors.ResourceOptions(
       allow_credentials=True,
@@ -253,7 +257,10 @@ class ChatGPTAPI:
 
     # broadcast that the request is started to all peers
     await self.node.send_completion_started(request_id)
-    
+
+    # print out topology
+    print(f"Current topology: {self.node.topology}")
+
     if self.on_chat_completion_request:
       try:
         self.on_chat_completion_request(request_id, chat_request, prompt)
@@ -331,6 +338,7 @@ class ChatGPTAPI:
           if _request_id == request_id: self.stream_tasks[_request_id] = asyncio.create_task(stream_result(_request_id, tokens, is_finished))
 
           return _request_id == request_id and is_finished
+
 
         _, tokens, _ = await callback.wait(on_result, timeout=self.response_timeout)
         if request_id in self.stream_tasks:  # in case there is still a stream task running, wait for it to complete
