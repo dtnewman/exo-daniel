@@ -262,7 +262,7 @@ class ChatGPTAPI:
 
     print(f"Current topology: {self.node.current_topology}")
     current_weights = sorted(self.node.current_topology.nodes.items(), key=lambda x: x[0]) # sort by node id
-    self.weights = {node_id: weight for node_id, weight in current_weights}
+    self.weights = {node_id: specs.weight for node_id, specs in current_weights}
     print(f"Current weights: {self.weights}")
 
     if self.on_chat_completion_request:
