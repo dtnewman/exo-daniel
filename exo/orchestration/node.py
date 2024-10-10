@@ -32,7 +32,7 @@ class Node(ABC):
     pass
 
   @abstractmethod
-  async def send_completion_finished(self, request_id: str) -> None:
+  async def send_completion_started(self, request_id: str) -> None:
     pass
 
   @property

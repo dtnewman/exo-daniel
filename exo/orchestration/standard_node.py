@@ -58,12 +58,12 @@ class StandardNode(Node):
     await self.discovery.stop()
     await self.server.stop()
 
-  async def send_completion_finished(self, request_id: str) -> None:
-    print(f"Node {self.id} finished processing request {request_id}")
-    print(f"Sending completion finished to {self.peers}")
+  async def send_completion_started(self, request_id: str) -> None:
+    print(f"Node {self.id} started processing a request {request_id}")
+    print(f"Sending data to {self.peers}")
     for peer in self.peers:
-      print(f"Sending completion finished to {peer.id()}")
-      await peer.send_completion_finished(request_id)
+      print(f"Sending completion started to {peer.id()}")
+      await peer.send_completion_started(request_id)
 
   def on_node_status(self, request_id, opaque_status):
     try:

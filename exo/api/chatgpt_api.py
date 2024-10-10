@@ -226,6 +226,8 @@ class ChatGPTAPI:
 
 
   async def handle_post_chat_completions(self, request):
+    
+
     data = await request.json()
     if DEBUG >= 2: print(f"Handling chat completions request from {request.remote}: {data}")
     stream = data.get("stream", False)
@@ -248,6 +250,10 @@ class ChatGPTAPI:
 
     prompt, image_str = build_prompt(tokenizer, chat_request.messages)
     request_id = str(uuid.uuid4())
+
+    # broadcast that the request is started to all peers
+    await self.node.send_completion_started(request_id)
+    
     if self.on_chat_completion_request:
       try:
         self.on_chat_completion_request(request_id, chat_request, prompt)
@@ -335,8 +341,6 @@ class ChatGPTAPI:
             print("WARNING: Stream task timed out. This should not happen.")
         await response.write_eof()
 
-        # broadcast that the request is finished to all peers
-        await self.node.send_completion_finished(request_id)
         return response
       else:
         _, tokens, _ = await callback.wait(
@@ -351,8 +355,6 @@ class ChatGPTAPI:
           tokens = tokens[:-1]
           finish_reason = "stop"  
 
-        # broadcast that the request is finished to all peers
-        await self.node.send_completion_finished(request_id)
         return web.json_response(generate_completion(chat_request, tokenizer, prompt, request_id, tokens, stream, finish_reason, "chat.completion"))
     except asyncio.TimeoutError:
       return web.json_response({"detail": "Response generation timed out"}, status=408)
