@@ -11,6 +11,7 @@ from exo.networking.grpc.grpc_server import GRPCServer
 from exo.networking.udp.udp_discovery import UDPDiscovery
 from exo.networking.tailscale.tailscale_discovery import TailscaleDiscovery
 from exo.networking.grpc.grpc_peer_handle import GRPCPeerHandle
+from exo.topology.adaptive_partitioning_strategy import AdaptivePartitioningStrategy
 from exo.topology.hybrid_partitioning_strategy import HybridPartitioningStrategy
 from exo.topology.flops_weighted_partitioning_strategy import FlopsWeightedPartitioningStrategy
 from exo.topology.ring_memory_weighted_partitioning_strategy import RingMemoryWeightedPartitioningStrategy
@@ -86,6 +87,7 @@ elif args.discovery_module == "tailscale":
 topology_viz = TopologyViz(chatgpt_api_endpoints=chatgpt_api_endpoints, web_chat_urls=web_chat_urls) if not args.disable_tui else None
 
 partitioning_strategies = {
+  "adaptive": AdaptivePartitioningStrategy(),
   "flops": FlopsWeightedPartitioningStrategy(),
   "memory": RingMemoryWeightedPartitioningStrategy(),
   "hybrid": HybridPartitioningStrategy()

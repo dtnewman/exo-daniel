@@ -28,7 +28,7 @@ class DeviceCapabilities:
   memory: int
   flops: DeviceFlops
   avg_processing_time: float = 0  # average tensor processing time in ns (average over last 10 measurements)
-  weight: Optional[float] = None  # used by partitioning strategies
+  weight: Optional[float] = 1  # used by partitioning strategies
 
   # ... rest of the class remains the same ...
   def __str__(self):
