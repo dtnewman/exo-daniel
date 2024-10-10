@@ -60,6 +60,7 @@ class StandardNode(Node):
 
   async def send_completion_finished(self, request_id: str) -> None:
     print(f"Node {self.id} finished processing request {request_id}")
+    print(f"Sending completion finished to {self.peers}")
     for peer in self.peers:
       print(f"Sending completion finished to {peer.id()}")
       await peer.send_completion_finished(request_id)
