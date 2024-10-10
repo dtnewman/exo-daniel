@@ -12,6 +12,9 @@ class AdaptivePartitioningStrategy(PartitioningStrategy):
         request is processed faster than the previous one, the weights remain the same. If a
         subsequent request is processed slower, the weights are adjusted back to where they were
         before.
+
+        New weights are calculated and broadcast to all peers from the originator of the request.
+        This is handled in the ChatGPTAPI class.
         """
         nodes = list(topology.all_nodes())
         nodes.sort(key=lambda x: (-x[1].weight, -x[1].memory, x[0]))  # Sort by weight and then memory in descending order, then by node ID

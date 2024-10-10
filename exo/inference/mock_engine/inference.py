@@ -13,10 +13,10 @@ class MockInferenceEngine(InferenceEngine):
     """
     
     def __init__(self, input_data: List[int] = None, response: List[int] = None, latency: float = 1):
-        # default_response = never gonna let you down
-        default_response = [2646, 16926, 1095, 499, 1523, 128009]
-        # default_input_data = finish this sentence: never gonna give you up
+        # default_input_data = "finish this sentence: never gonna give you up"
         default_input_data = [51585, 65267, 53498, 52743, 63954, 61797, 56691, 61758, 60298, 62148, 59485, 57423, 61918, 57683, 49417, 61158, 62351, 52365, 52251]
+        # default_response = "never gonna let you down"
+        default_response = [2646, 16926, 1095, 499, 1523, 128009]
         
         self.input_data = input_data or default_input_data
         self.response = iter(response or default_response)
