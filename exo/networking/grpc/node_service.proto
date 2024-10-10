@@ -75,6 +75,7 @@ message DeviceCapabilities {
   int32 memory = 3;
   DeviceFlops flops = 4;
   float avg_processing_time = 5;
+  optional float weight = 6;
 }
 
 message SendResultRequest {
