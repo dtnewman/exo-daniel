@@ -14,7 +14,9 @@ class HybridPartitioningStrategy(PartitioningStrategy):
     def partition(self, topology: Topology) -> List[Partition]:
         """
         This strategy gives weights to nodes based on their flops and memory,
-        normalizing them to ensure the scales are comparable.
+        normalizing them to ensure the scales are comparable. It also uses each
+        node's average processing time to ensure that the nodes with the shortest
+        calculated processing times are ordered first.
         """
         nodes = list(topology.all_nodes())
         
@@ -32,8 +34,8 @@ class HybridPartitioningStrategy(PartitioningStrategy):
             normalized_memory = node[1].memory / max_memory
             node[1].weight = normalized_flops * self.flops_weight + normalized_memory * self.memory_weight
 
-        # Sort by weight in descending order, then by node ID
-        nodes.sort(key=lambda x: (-float(x[1].weight), x[1].avg_processing_time, x[0]))
+        # Sort by average processing time, then weight in descending order, then by node ID
+        nodes.sort(key=lambda x: (x[1].avg_processing_time, -float(x[1].weight), x[0]))
 
         total_weight = sum(node[1].weight for node in nodes)
 

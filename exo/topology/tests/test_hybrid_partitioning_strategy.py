@@ -227,6 +227,43 @@ class TestHybridPartitioningStrategy(unittest.TestCase):
             ],
         )
 
+    def test_partition_with_processing_time(self):
+        topology = Topology()
+        topology.update_node(
+            "node1",
+            DeviceCapabilities(
+                model="MacBook Pro",
+                chip="test1",
+                memory=128*1024*1024*1024,
+                flops=DeviceFlops(fp32=0.5, fp16=1.0, int8=2.0),
+                avg_processing_time=1.0,
+            ),
+        )   
+        topology.update_node(
+            "node2",
+            DeviceCapabilities(
+                model="Mac Studio",
+                chip="test2",
+                memory=256*1024*1024*1024,
+                flops=DeviceFlops(fp32=1.0, fp16=2.0, int8=4.0),
+                avg_processing_time=2.0,
+            ),
+        )   
+
+        # the specs on machine 1 are stronger for both memory and flops, but machine 1
+        # has a lower average processing time, so it should come first
+        strategy = HybridPartitioningStrategy(flops_weight=0.5, memory_weight=0.5)
+        partitions = strategy.partition(topology)
+
+        self.assertEqual(len(partitions), 2)
+        self.assertEqual(
+            partitions,
+            [
+                Partition("node1", 0.0, 0.33333),
+                Partition("node2", 0.33333, 1.0),
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
