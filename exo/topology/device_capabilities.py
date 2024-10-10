@@ -27,7 +27,7 @@ class DeviceCapabilities:
   chip: str
   memory: int
   flops: DeviceFlops
-  avg_processing_time: float = None  # average tensor processing time in ns (average over last 10 measurements)
+  avg_processing_time: float = 0  # average tensor processing time in ns (average over last 10 measurements)
   weight: Optional[float] = None  # used by partitioning strategies
 
   # ... rest of the class remains the same ...
@@ -37,14 +37,12 @@ class DeviceCapabilities:
   def __post_init__(self):
     if isinstance(self.flops, dict):
       self.flops = DeviceFlops(**self.flops)
-    if self.avg_processing_time is None:
-      self.avg_processing_time = None
   
   def to_dict(self):
     return {"model": self.model, "chip": self.chip, "memory": self.memory, "flops": self.flops.to_dict(), "avg_processing_time": self.avg_processing_time, "weight": self.weight}
 
 
-UNKNOWN_DEVICE_CAPABILITIES = DeviceCapabilities(model="Unknown Model", chip="Unknown Chip", memory=0, flops=DeviceFlops(fp32=0, fp16=0, int8=0), avg_processing_time=None, weight=None)
+UNKNOWN_DEVICE_CAPABILITIES = DeviceCapabilities(model="Unknown Model", chip="Unknown Chip", memory=0, flops=DeviceFlops(fp32=0, fp16=0, int8=0), avg_processing_time=0, weight=None)
 
 CHIP_FLOPS = {
   # Source: https://www.cpu-monkey.com
@@ -153,7 +151,7 @@ def device_capabilities() -> DeviceCapabilities:
       chip="Unknown Chip",
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
-      avg_processing_time=None,
+      avg_processing_time=0,
       weight=None,
     )
 
@@ -175,7 +173,7 @@ def mac_device_capabilities() -> DeviceCapabilities:
     memory = memory_value
 
   # Assuming static values for other attributes for demonstration
-  return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)), avg_processing_time=None, weight=None)
+  return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)), avg_processing_time=0, weight=None)
 
 
 def linux_device_capabilities() -> DeviceCapabilities:
@@ -198,7 +196,7 @@ def linux_device_capabilities() -> DeviceCapabilities:
       chip=gpu_name,
       memory=gpu_memory_info.total // 2**20,
       flops=CHIP_FLOPS.get(gpu_name.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)),
-      avg_processing_time=None,
+      avg_processing_time=0,
       weight=None,
     )
   elif Device.DEFAULT == "AMD":
@@ -208,7 +206,7 @@ def linux_device_capabilities() -> DeviceCapabilities:
       chip="Unknown AMD",
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
-      avg_processing_time=None,
+      avg_processing_time=0,
       weight=None,
     )
   else:
@@ -217,6 +215,6 @@ def linux_device_capabilities() -> DeviceCapabilities:
       chip=f"Unknown Chip (Device: {Device.DEFAULT})",
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
-      avg_processing_time=None,
+      avg_processing_time=0,
       weight=None,
     )
