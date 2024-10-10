@@ -3,6 +3,7 @@ import uuid
 import time
 import asyncio
 import json
+import random
 from pathlib import Path
 from transformers import AutoTokenizer
 from typing import Deque, List, Literal, Optional, Union, Dict
@@ -168,8 +169,8 @@ class ChatGPTAPI:
     self.stream_tasks: Dict[str, asyncio.Task] = {}
     self.previous_request_time: Optional[float] = None
     self.previous_request_tokens: Optional[int] = None
-    self.prev_weights = None
-    self.weights = None
+    self.prev_weights = {}
+    self.experimental_weights = {}
 
     cors = aiohttp_cors.setup(self.app)
     cors_options = aiohttp_cors.ResourceOptions(
@@ -260,10 +261,24 @@ class ChatGPTAPI:
     # broadcast that the request is started to all peers
     await self.node.send_completion_started(request_id)
 
-    print(f"Current topology: {self.node.current_topology}")
-    current_weights = sorted(self.node.current_topology.nodes.items(), key=lambda x: x[0]) # sort by node id
-    self.weights = {node_id: specs.weight for node_id, specs in current_weights}
-    print(f"Current weights: {self.weights}")
+
+    # if we have a previous throughput, to compare to, then we can try adjust the weights randomly to
+    # see if that improves throughput.
+
+    if self.prev_weights:
+      print(f"Previous weights: {self.prev_weights}")
+      new_weights_dict = {}
+      for node_id, weight in self.prev_weights.items():
+        random_float = random.random()
+        if random_float < 0.1:  # 10% chance to adjust the weight
+          # adjust the weight by a random amount between -10% and +10%
+          new_weights_dict[node_id] = weight * random.uniform(0.9, 1.1)
+        else:
+          new_weights_dict[node_id] = weight
+      print(f"New weights: {new_weights_dict}")
+      self.experimental_weights = new_weights_dict
+
+
 
     if self.on_chat_completion_request:
       try:
@@ -343,9 +358,37 @@ class ChatGPTAPI:
 
           return _request_id == request_id and is_finished
 
-
+        start_time = time.perf_counter_ns()
         _, tokens, _ = await callback.wait(on_result, timeout=self.response_timeout)
-        print(f"Received tokens: {tokens}")
+        end_time = time.perf_counter_ns()
+        execution_time_ms = (end_time - start_time) / 1_000_000
+
+        # TODO: store this information in persistent storage so that it can be used for non-streaming applications
+        # of if the server is restarted. That will also give us more data to work with when deciding on the best
+        # weights for a given model.
+        print(f"Execution time for callback.wait: {execution_time_ms:.2f} ms")
+        if self.prev_weights:
+          # If there is a previous request to measure against, check if this request is faster
+          # in which case we can keep the current weights. Otherwise revert to previous weights.
+          throughput = len(tokens) / execution_time_ms * 1000
+          previous_throughput = self.previous_request_tokens / self.previous_request_time * 1000
+          if throughput > previous_throughput:
+            self.prev_weights = self.weights
+          else:
+            # reset the experimental weights to None since we are going back to the previous weights
+            self.prev_weights = None
+            self.experimental_weights = None
+            self.previous_request_time = None
+            self.previous_request_tokens = None
+
+            # TODO: implement the following grpc call to broadcast the new weights to all peers
+            # await self.node.send_weights(self.weights)  
+        else:
+          self.previous_request_time = execution_time_ms
+          self.previous_request_tokens = len(tokens)
+          self.prev_weights = self.experimental_weights
+
+
         if request_id in self.stream_tasks:  # in case there is still a stream task running, wait for it to complete
           if DEBUG >= 2: print("Pending stream task. Waiting for stream task to complete.")
           try:
