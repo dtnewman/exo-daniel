@@ -100,6 +100,7 @@ class StandardNode(Node):
     resp = await self._process_prompt(base_shard, prompt, image_str, request_id, inference_state)
     end_time = time.perf_counter_ns()
     elapsed_time_ns = end_time - start_time
+    print(f"DANIEL!!! [{request_id}] elapsed time: {elapsed_time_ns} ns")
     asyncio.create_task(
       self.broadcast_opaque_status(
         request_id,
@@ -396,7 +397,6 @@ class StandardNode(Node):
     self.topology = next_topology
     if self.topology_viz:
       self.topology_viz.update_visualization(self.current_topology, self.partitioning_strategy.partition(self.current_topology), self.id)
-    print(f"Collected topology: {next_topology}")
     return next_topology
 
   @property
