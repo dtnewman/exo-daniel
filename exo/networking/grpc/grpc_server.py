@@ -125,5 +125,5 @@ class GRPCServer(node_service_pb2_grpc.NodeServiceServicer):
   async def SendCompletionStarted(self, request, context):
     request_id = request.request_id
     print(f"Received SendCompletionStarted request: {request_id=}")
-    self.node.on_completion_started(request_id)
+    await self.node.on_completion_started(request_id)
     return node_service_pb2.Empty()
