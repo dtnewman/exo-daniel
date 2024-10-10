@@ -42,7 +42,7 @@ class DeviceCapabilities:
     return {"model": self.model, "chip": self.chip, "memory": self.memory, "flops": self.flops.to_dict(), "avg_processing_time": self.avg_processing_time, "weight": self.weight}
 
 
-UNKNOWN_DEVICE_CAPABILITIES = DeviceCapabilities(model="Unknown Model", chip="Unknown Chip", memory=0, flops=DeviceFlops(fp32=0, fp16=0, int8=0), avg_processing_time=0, weight=None)
+UNKNOWN_DEVICE_CAPABILITIES = DeviceCapabilities(model="Unknown Model", chip="Unknown Chip", memory=0, flops=DeviceFlops(fp32=0, fp16=0, int8=0), avg_processing_time=0, weight=1)
 
 CHIP_FLOPS = {
   # Source: https://www.cpu-monkey.com
@@ -152,7 +152,7 @@ def device_capabilities() -> DeviceCapabilities:
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
       avg_processing_time=0,
-      weight=None,
+      weight=1,
     )
 
 
@@ -173,7 +173,7 @@ def mac_device_capabilities() -> DeviceCapabilities:
     memory = memory_value
 
   # Assuming static values for other attributes for demonstration
-  return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)), avg_processing_time=0, weight=None)
+  return DeviceCapabilities(model=model_id, chip=chip_id, memory=memory, flops=CHIP_FLOPS.get(chip_id.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)), avg_processing_time=0, weight=1)
 
 
 def linux_device_capabilities() -> DeviceCapabilities:
@@ -197,7 +197,7 @@ def linux_device_capabilities() -> DeviceCapabilities:
       memory=gpu_memory_info.total // 2**20,
       flops=CHIP_FLOPS.get(gpu_name.lower(), DeviceFlops(fp32=0, fp16=0, int8=0)),
       avg_processing_time=0,
-      weight=None,
+      weight=1,
     )
   elif Device.DEFAULT == "AMD":
     # TODO AMD support
@@ -207,7 +207,7 @@ def linux_device_capabilities() -> DeviceCapabilities:
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
       avg_processing_time=0,
-      weight=None,
+      weight=1,
     )
   else:
     return DeviceCapabilities(
@@ -216,5 +216,5 @@ def linux_device_capabilities() -> DeviceCapabilities:
       memory=psutil.virtual_memory().total // 2**20,
       flops=DeviceFlops(fp32=0, fp16=0, int8=0),
       avg_processing_time=0,
-      weight=None,
+      weight=1,
     )
