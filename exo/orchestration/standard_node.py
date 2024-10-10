@@ -73,9 +73,9 @@ class StandardNode(Node):
     print(f"Received a new completion started event for {request_id=}")
 
     # update processing times in topology
-    avg_processing_time = sum(self.processing_times) / len(self.processing_times)
     if len(self.processing_times) >= 5:
       # only update the processing time if we have more than 5 or more measurements
+      avg_processing_time = sum(self.processing_times) / len(self.processing_times)
       self.topology.update_avg_processing_time(self.id, avg_processing_time)
 
   def on_node_status(self, request_id, opaque_status):
