@@ -61,8 +61,9 @@ class StandardNode(Node):
   async def send_completion_started(self, request_id: str) -> None:
     print(f"Node {self.id} started processing a request {request_id}")
     for peer in self.peers:
-      asyncio.create_task(peer.send_completion_started(request_id))
+      await peer.send_completion_started(request_id)
     
+
     if len(self.processing_times) >= 5:
       # only update the processing time if we have more than 5 or more measurements
       avg_processing_time = sum(self.processing_times) / len(self.processing_times)
