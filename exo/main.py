@@ -50,7 +50,7 @@ parser.add_argument("--run-model", type=str, help="Specify a model to run direct
 parser.add_argument("--prompt", type=str, help="Prompt for the model when using --run-model", default="Who are you?")
 parser.add_argument("--tailscale-api-key", type=str, default=None, help="Tailscale API key")
 parser.add_argument("--tailnet-name", type=str, default=None, help="Tailnet name")
-parser.add_argument("--partitioning-strategy", type=str, choices=["flops", "memory", "hybrid"], default="hybrid", help="Partitioning strategy to use")
+parser.add_argument("--partitioning-strategy", type=str, choices=["flops", "memory", "hybrid", "adaptive"], default="hybrid", help="Partitioning strategy to use")
 parser.add_argument("--mock-inference-engine-latency", type=float, default=1, help="Latency for mock inference engine")
 args = parser.parse_args()
 
