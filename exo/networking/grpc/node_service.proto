@@ -10,6 +10,7 @@ service NodeService {
   rpc SendResult (SendResultRequest) returns (Empty) {}
   rpc SendOpaqueStatus (SendOpaqueStatusRequest) returns (Empty) {}
   rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {}
+  rpc SendCompletionFinished (SendCompletionFinishedRequest) returns (Empty) {}
 }
 
 message Shard {
@@ -87,6 +88,10 @@ message SendResultRequest {
 message SendOpaqueStatusRequest {
   string request_id = 1;
   string status = 2;
+}
+
+message SendCompletionFinishedRequest {
+  string request_id = 1;
 }
 
 message HealthCheckRequest {}

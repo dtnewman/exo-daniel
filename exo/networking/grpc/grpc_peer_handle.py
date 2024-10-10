@@ -135,3 +135,7 @@ class GRPCPeerHandle(PeerHandle):
   async def send_opaque_status(self, request_id: str, status: str) -> None:
     request = node_service_pb2.SendOpaqueStatusRequest(request_id=request_id, status=status)
     await self.stub.SendOpaqueStatus(request)
+
+  async def send_completion_finished(self, request_id: str) -> None:
+    request = node_service_pb2.SendCompletionFinishedRequest(request_id=request_id)
+    await self.stub.SendCompletionFinished(request)

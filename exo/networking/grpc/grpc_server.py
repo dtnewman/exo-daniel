@@ -121,3 +121,8 @@ class GRPCServer(node_service_pb2_grpc.NodeServiceServicer):
 
   async def HealthCheck(self, request, context):
     return node_service_pb2.HealthCheckResponse(is_healthy=True)
+  
+  async def SendCompletionFinished(self, request, context):
+    request_id = request.request_id
+    print(f"Received SendCompletionFinished request: {request_id=}")
+    return node_service_pb2.Empty()
