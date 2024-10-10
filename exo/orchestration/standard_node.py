@@ -182,8 +182,9 @@ class StandardNode(Node):
     # Calculate and update the average processing time over the last 10 measurements
     self.processing_times.append(elapsed_time_ns)
     avg_processing_time = sum(self.processing_times) / len(self.processing_times)
-    print(self.processing_times)
-    self.topology.update_avg_processing_time(self.id, avg_processing_time)
+    if len(self.processing_times) >= 5:
+      # only update the processing time if we have more than 5 or more measurements
+      self.topology.update_avg_processing_time(self.id, avg_processing_time)
     asyncio.create_task(
       self.broadcast_opaque_status(
         request_id,

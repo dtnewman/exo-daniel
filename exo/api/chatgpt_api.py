@@ -334,6 +334,7 @@ class ChatGPTAPI:
           except asyncio.TimeoutError:
             print("WARNING: Stream task timed out. This should not happen.")
         await response.write_eof()
+        print("HELLO1!!!!")
         return response
       else:
         _, tokens, _ = await callback.wait(
@@ -347,7 +348,7 @@ class ChatGPTAPI:
         if tokens[-1] == eos_token_id:
           tokens = tokens[:-1]
           finish_reason = "stop"
-
+        print("HELLO2!!!!")
         return web.json_response(generate_completion(chat_request, tokenizer, prompt, request_id, tokens, stream, finish_reason, "chat.completion"))
     except asyncio.TimeoutError:
       return web.json_response({"detail": "Response generation timed out"}, status=408)
