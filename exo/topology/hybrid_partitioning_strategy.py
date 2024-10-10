@@ -17,9 +17,7 @@ class HybridPartitioningStrategy(PartitioningStrategy):
         normalizing them to ensure the scales are comparable.
         """
         nodes = list(topology.all_nodes())
-
-        print(nodes)
-
+        
         # Get max FLOPS and memory to normalize the values
         max_flops = max(node[1].flops.fp32 for node in nodes)
         max_memory = max(node[1].memory for node in nodes)

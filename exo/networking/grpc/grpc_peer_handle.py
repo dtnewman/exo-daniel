@@ -128,6 +128,7 @@ class GRPCPeerHandle(PeerHandle):
     return topology
 
   async def send_result(self, request_id: str, result: List[int], is_finished: bool) -> None:
+    print(f"Sending result: {request_id=} {result=} {is_finished=}")
     request = node_service_pb2.SendResultRequest(request_id=request_id, result=result, is_finished=is_finished)
     await self.stub.SendResult(request)
 
