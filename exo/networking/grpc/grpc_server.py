@@ -95,7 +95,7 @@ class GRPCServer(node_service_pb2_grpc.NodeServiceServicer):
           chip=cap.chip,
           memory=cap.memory,
           flops=node_service_pb2.DeviceFlops(fp32=cap.flops.fp32, fp16=cap.flops.fp16, int8=cap.flops.int8),
-          latency=cap.latency,
+          latency=cap.avg_processing_time,
           weight=cap.weight,
         )
       for node_id, cap in topology.nodes.items()

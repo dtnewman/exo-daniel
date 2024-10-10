@@ -1,4 +1,4 @@
-from collections import defaultdict, deque
+from collections import deque
 import numpy as np
 import json
 import asyncio
@@ -36,7 +36,7 @@ class StandardNode(Node):
     self.partitioning_strategy = partitioning_strategy
     self.peers: List[PeerHandle] = {}
     self.topology: Topology = Topology()
-    self.latency_measurements: Dict[str, Deque[float]] = defaultdict(lambda: deque(maxlen=5))
+    self.processing_times: Deque[float] = deque(maxlen=10)
     self.device_capabilities = device_capabilities()
     self.buffered_token_output: Dict[str, Tuple[List[int], bool]] = {}
     self.max_generate_tokens = max_generate_tokens
@@ -45,7 +45,6 @@ class StandardNode(Node):
     self._on_opaque_status = AsyncCallbackSystem[str, Tuple[str, str]]()
     self._on_opaque_status.register("node_status").on_next(self.on_node_status)
     self.node_download_progress: Dict[str, RepoProgressEvent] = {}
-    self._last_topology_collection_time = time.time()
 
   async def start(self, wait_for_peers: int = 0) -> None:
     await self.server.start()
@@ -179,6 +178,12 @@ class StandardNode(Node):
     resp = await self._process_tensor(shard, tensor, request_id, inference_state)
     end_time = time.perf_counter_ns()
     elapsed_time_ns = end_time - start_time
+
+    # Calculate and update the average processing time over the last 10 measurements
+    self.processing_times.append(elapsed_time_ns)
+    avg_processing_time = sum(self.processing_times) / len(self.processing_times)
+    print(self.processing_times)
+    self.topology.update_avg_processing_time(self.id, avg_processing_time)
     asyncio.create_task(
       self.broadcast_opaque_status(
         request_id,
@@ -268,19 +273,7 @@ class StandardNode(Node):
       if DEBUG >= 1: print(f"Sending tensor_or_prompt to {target_peer.id()}: {tensor_or_prompt}")
 
       if isinstance(tensor_or_prompt, np.ndarray):
-        start_time = time.perf_counter_ns()
         await target_peer.send_tensor(next_shard, tensor_or_prompt, request_id=request_id, inference_state=inference_state)
-        end_time = time.perf_counter_ns()
-        elapsed_time_ms = (end_time - start_time) / 1_000_000
-        
-        # todo: WIP, calculate and store this on the node itself, rather than in the request to the node
-        self.latency_measurements[target_peer.id()].append(elapsed_time_ms)
-        
-        # update the latency dict with the average latency over the last 5 measurements
-        avg_latency = sum(self.latency_measurements[target_peer.id()]) / len(self.latency_measurements[target_peer.id()])
-        print(f"Average latency to {target_peer.id()}: {avg_latency} ms")
-        # update topology with latency
-        self.topology.update_node_latency(self.id, target_peer.id(), avg_latency)
       else:
         await target_peer.send_prompt(next_shard, tensor_or_prompt, image_str=image_str, request_id=request_id, inference_state=inference_state)
 
@@ -359,10 +352,8 @@ class StandardNode(Node):
       try:
         did_peers_change = await self.update_peers()
         if DEBUG >= 2: print(f"{did_peers_change=}")
-        # TODO: this about whether this should be done periodically, or just at the end of a request
-        if did_peers_change or time.time() - self._last_topology_collection_time > 60.0:
+        if did_peers_change:
           await self.collect_topology()
-          self._last_topology_collection_time = time.time()
       except Exception as e:
         print(f"Error collecting topology: {e}")
         traceback.print_exc()

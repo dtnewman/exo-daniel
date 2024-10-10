@@ -11,12 +11,8 @@ class Topology:
   def update_node(self, node_id: str, device_capabilities: DeviceCapabilities):
     self.nodes[node_id] = device_capabilities
 
-  def update_node_latency(self, node_id: str, peer_id: str, latency: float):
-    if node_id not in self.nodes:
-      return
-    if peer_id not in self.nodes:
-      return
-    self.nodes[node_id].latency[peer_id] = latency
+  def update_avg_processing_time(self, node_id: str, value: float):
+    self.nodes[node_id].avg_processing_time = value
 
   def get_node(self, node_id: str) -> DeviceCapabilities:
     return self.nodes.get(node_id)

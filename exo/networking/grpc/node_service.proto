@@ -74,7 +74,7 @@ message DeviceCapabilities {
   string chip = 2;
   int32 memory = 3;
   DeviceFlops flops = 4;
-  map<string, float> node_latencies = 5;
+  float avg_processing_time = 5;
 }
 
 message SendResultRequest {

@@ -98,7 +98,7 @@ async def get_device_attributes(device_id: str, api_key: str) -> Tuple[str, int,
         return node_id, node_port, device_capabilities
       else:
         print(f"Failed to fetch posture attributes for {device_id}: {response.status}")
-        return "", 0, DeviceCapabilities(model="", chip="", memory=0, flops=DeviceFlops(fp16=0, fp32=0, int8=0), latency={}, weight=None)
+        return "", 0, DeviceCapabilities(model="", chip="", memory=0, flops=DeviceFlops(fp16=0, fp32=0, int8=0), avg_processing_time=None, weight=None)
 
 def parse_device_attributes(data: Dict[str, str]) -> Dict[str, Any]:
   result = {}
