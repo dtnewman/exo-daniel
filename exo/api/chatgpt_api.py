@@ -336,7 +336,7 @@ class ChatGPTAPI:
         await response.write_eof()
 
         # broadcast that the request is finished to all peers
-        self.node.send_completion_finished(request_id)
+        await self.node.send_completion_finished(request_id)
         return response
       else:
         _, tokens, _ = await callback.wait(
@@ -352,7 +352,7 @@ class ChatGPTAPI:
           finish_reason = "stop"  
 
         # broadcast that the request is finished to all peers
-        self.node.send_completion_finished(request_id)
+        await self.node.send_completion_finished(request_id)
         return web.json_response(generate_completion(chat_request, tokenizer, prompt, request_id, tokens, stream, finish_reason, "chat.completion"))
     except asyncio.TimeoutError:
       return web.json_response({"detail": "Response generation timed out"}, status=408)
