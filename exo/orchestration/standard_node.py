@@ -59,6 +59,9 @@ class StandardNode(Node):
     await self.server.stop()
 
   async def send_completion_started(self, request_id: str) -> None:
+    """
+    This is for the originating node to broadcast to all peers that a completion request has started.
+    """
     print(f"Node {self.id} started processing a request {request_id}")
     for peer in self.peers:
       try:
@@ -68,16 +71,19 @@ class StandardNode(Node):
     
 
     if len(self.processing_times) >= 5:
-      # only update the processing time if we have more than 5 or more measurements
+      # only update the processing time if we have more than 5 measurements
       avg_processing_time = sum(self.processing_times) / len(self.processing_times)
       self.topology.update_avg_processing_time(self.id, avg_processing_time)
 
   async def on_completion_started(self, request_id: str) -> None:
+    """
+    This is for a peer to receive a completion started event from another peer.
+    """
     print(f"Received a new completion started event for {request_id=}")
 
     # update processing times in topology
     if len(self.processing_times) >= 5:
-      # only update the processing time if we have more than 5 or more measurements
+      # only update the processing time if we have more than 5 measurements
       avg_processing_time = sum(self.processing_times) / len(self.processing_times)
       self.topology.update_avg_processing_time(self.id, avg_processing_time)
 

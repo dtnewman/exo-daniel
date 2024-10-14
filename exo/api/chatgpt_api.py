@@ -258,11 +258,10 @@ class ChatGPTAPI:
     prompt, image_str = build_prompt(tokenizer, chat_request.messages)
     request_id = str(uuid.uuid4())
 
-    # broadcast that the request is started to all peers
+    # broadcast that a completion request has started to all peers
     await self.node.send_completion_started(request_id)
 
-
-    # if we have a previous throughput, to compare to, then we can try adjust the weights randomly to
+    # if we have a previous throughput to compare to, then we can try adjust the weights randomly to
     # see if that improves throughput.
 
     if self.prev_weights:

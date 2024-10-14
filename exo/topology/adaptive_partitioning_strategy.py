@@ -8,10 +8,10 @@ class AdaptivePartitioningStrategy(PartitioningStrategy):
         """
         Experimental: This strategy uses weights to determine ordering and partitioning of nodes.
         The weights are assigned an initial value of 1 on the first API request. They then get
-        updated stochastically based on the processing times of the requests. If a subsequent
-        request is processed faster than the previous one, the weights remain the same. If a
-        subsequent request is processed slower, the weights are adjusted back to where they were
-        before.
+        updated stochastically (using simple stochastic hill-climbing) based on the processing
+        times of the requests (the full completion throughput). If a subsequent request is 
+        processed faster than the previous one, the weights remain the same. If a subsequent 
+        request is processed slower, the weights are adjusted back to where they were before.
 
         New weights are calculated and broadcast to all peers from the originator of the request.
         This is handled in the ChatGPTAPI class.
