@@ -73,9 +73,7 @@ document.addEventListener("alpine:init", () => {
     },
 
     async populateSelector() {
-      const response = await fetch(`${this.endpoint}/modelpool`, {
-        method: "GET"
-      });
+      const response = await fetch(`${this.endpoint}/modelpool`)
       console.log("Populating Selector")
       if(!response.ok) {
         const errorResBody = await response.json()
