@@ -71,6 +71,7 @@ document.addEventListener("alpine:init", () => {
       if (m > 0) return `${m}m ${s}s`;
       return `${s}s`;
     },
+
     async populateSelector(){
       const response = await fetch(`$(this.endpoint}/modelpool`, {
         method: "GET"
@@ -93,7 +94,7 @@ document.addEventListener("alpine:init", () => {
         console.log(`Model: ${k} (${v})`)
         sel.append(opt)
       });
-    }
+    },
 
     async handleImageUpload(event) {
       const file = event.target.files[0];
