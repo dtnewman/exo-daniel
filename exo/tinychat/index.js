@@ -71,7 +71,7 @@ document.addEventListener("alpine:init", () => {
       if (m > 0) return `${m}m ${s}s`;
       return `${s}s`;
     },
-    async function populateSelector(){
+    async populateSelector(){
       const response = await fetch(`$(this.endpoint}/modelpool`, {
         method: "GET"
       });
