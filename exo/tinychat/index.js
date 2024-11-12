@@ -76,7 +76,7 @@ document.addEventListener("alpine:init", () => {
       const response = await fetch(`${this.endpoint}/modelpool`);
       console.log("Populating Selector");
       if(!response.ok) {
-        const errorResBody = await response.json()
+        const errorResBody = await response.json();
         if (errorResBody?.detail) {
           throw new Error(`Failed to get model pool: ${errorResBody.detail}`);
         } else {
