@@ -72,7 +72,7 @@ document.addEventListener("alpine:init", () => {
       return `${s}s`;
     },
 
-    async populateSelector(){
+    async populateSelector() {
       const response = await fetch(`$(this.endpoint}/modelpool`, {
         method: "GET"
       });
