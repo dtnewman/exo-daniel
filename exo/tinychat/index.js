@@ -74,7 +74,7 @@ document.addEventListener("alpine:init", () => {
 
     async populateSelector() {
       const response = await fetch(`${this.endpoint}/modelpool`);
-      console.log("Populating Selector");
+      console.log("Populating Selector")
       if(!response.ok) {
         const errorResBody = await response.json();
         if (errorResBody?.detail) {
@@ -89,7 +89,7 @@ document.addEventListener("alpine:init", () => {
         let opt = document.createElement("option");
         opt.value = k;
         opt.innerHtml = v;
-        console.log(`Model: ${k} (${v})`);
+        console.log(`Model: ${k} (${v})`)
         sel.append(opt);
       });
     },
