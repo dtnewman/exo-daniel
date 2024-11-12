@@ -29,9 +29,10 @@
     <div x-show="errorMessage" x-transition.opacity x-text="errorMessage" class="toast">
     </div>
 <div class="model-selector">
-  <select @change="if (cstate) cstate.selectedModel = $event.target.value; await populate_selector()" x-model="cstate.selectedModel" class='model-select'>
+  <select @change="if (cstate) cstate.selectedModel = $event.target.value" x-model="cstate.selectedModel" class='model-select'>
   </select>
 </div>
+<script src="await populateSelector()" defer></script>
 <div @popstate.window="
       if (home === 2) {
         home = -1;
