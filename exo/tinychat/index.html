@@ -32,9 +32,6 @@
   <select @change="if (cstate) cstate.selectedModel = $event.target.value; await populate_selector()" x-model="cstate.selectedModel" class='model-select'>
   </select>
 </div>
-<script>
-  await populate_selector()
-</script>
 <div @popstate.window="
       if (home === 2) {
         home = -1;
