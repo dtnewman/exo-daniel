@@ -32,7 +32,6 @@
   <select @change="if (cstate) cstate.selectedModel = $event.target.value" x-model="cstate.selectedModel" x-init="await populateSelector()" class='model-select'>
   </select>
 </div>
-<script src="await populateSelector()" defer></script>
 <div @popstate.window="
       if (home === 2) {
         home = -1;
@@ -194,6 +193,7 @@
 <i class="fas fa-times"></i>
 </button>
 </div>
+<script src="await populateSelector()" defer></script>
 <textarea :disabled="generating" :placeholder="generating ? 'Generating...' : 'Say something'" @input="
             home = (home === 0) ? 1 : home
             if (cstate.messages.length === 0 &amp;&amp; $el.value === '') home = -1;
