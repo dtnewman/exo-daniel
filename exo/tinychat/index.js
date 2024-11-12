@@ -267,30 +267,6 @@ document.addEventListener("alpine:init", () => {
       }).catch(console.error);
     },
 
-    async populateSelector(){
-      const response = await fetch(`$(this.endpoint}/modelpool`, {
-        method: "GET"
-      });
-      console.log("Populating Selector")
-      if(!response.ok) {
-        const errorResBody = await response.json()
-        if (errorResBody?.detail) {
-          throw new Error(`Failed to get model pool: ${errorResBody.detail}`);
-        } else {
-          throw new Error("Failed to get model pool: Unknown error");
-        }
-      }
-      sel = document.getElementById("model-select")
-      sel.empty()
-      response["model pool"].map((k, v) => {
-        let opt = document.createElement("option")
-        opt.value = k
-        opt.innerHtml = v
-        console.log(`Model: ${k} (${v})`)
-        sel.append(opt)
-      });
-    }
-
     async *openaiChatCompletion(model, messages) {
       // stream response
       console.log("model", model)
@@ -559,6 +535,30 @@ function createParser(onParse) {
     }
   }
 }
+async function populateSelector(){
+  const response = await fetch(`$(this.endpoint}/modelpool`, {
+    method: "GET"
+  });
+  console.log("Populating Selector")
+  if(!response.ok) {
+    const errorResBody = await response.json()
+    if (errorResBody?.detail) {
+      throw new Error(`Failed to get model pool: ${errorResBody.detail}`);
+    } else {
+      throw new Error("Failed to get model pool: Unknown error");
+    }
+  }
+  sel = document.getElementById("model-select")
+  sel.empty()
+  response["model pool"].map((k, v) => {
+    let opt = document.createElement("option")
+    opt.value = k
+    opt.innerHtml = v
+    console.log(`Model: ${k} (${v})`)
+    sel.append(opt)
+  });
+}
+
 const BOM = [239, 187, 191];
 function hasBom(buffer) {
   return BOM.every((charCode, index) => buffer.charCodeAt(index) === charCode);
