@@ -267,6 +267,28 @@ document.addEventListener("alpine:init", () => {
       }).catch(console.error);
     },
 
+    async populateSelector(){
+      sel = document.getElementById("model-select")
+      sel.empty()
+      const response = await fetch(`$(this.endpoint}/modelpool`, {
+        method: "GET"
+      });
+      if(!response.ok) {
+        const errorResBody = await response.json()
+        if (errorResBody?.detail) {
+          throw new Error(`Failed to get model pool: ${errorResBody.detail}`);
+        } else {
+          throw new Error("Failed to get model pool: Unknown error");
+        }
+      }
+      response["model pool"].map((k, v) => {
+        let opt = document.createElement("option")
+        opt.value = k
+        opt.innerHtml = v
+        sel.append(opt)
+      });
+    }
+
     async *openaiChatCompletion(model, messages) {
       // stream response
       console.log("model", model)
