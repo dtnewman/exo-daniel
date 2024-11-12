@@ -71,6 +71,29 @@ document.addEventListener("alpine:init", () => {
       if (m > 0) return `${m}m ${s}s`;
       return `${s}s`;
     },
+    async function populateSelector(){
+      const response = await fetch(`$(this.endpoint}/modelpool`, {
+        method: "GET"
+      });
+      console.log("Populating Selector")
+      if(!response.ok) {
+        const errorResBody = await response.json()
+        if (errorResBody?.detail) {
+          throw new Error(`Failed to get model pool: ${errorResBody.detail}`);
+        } else {
+          throw new Error("Failed to get model pool: Unknown error");
+        }
+      }
+      sel = document.getElementById("model-select")
+      sel.empty()
+      response["model pool"].map((k, v) => {
+        let opt = document.createElement("option")
+        opt.value = k
+        opt.innerHtml = v
+        console.log(`Model: ${k} (${v})`)
+        sel.append(opt)
+      });
+    }
 
     async handleImageUpload(event) {
       const file = event.target.files[0];
@@ -534,29 +557,6 @@ function createParser(onParse) {
       }
     }
   }
-}
-async function populateSelector(){
-  const response = await fetch(`$(this.endpoint}/modelpool`, {
-    method: "GET"
-  });
-  console.log("Populating Selector")
-  if(!response.ok) {
-    const errorResBody = await response.json()
-    if (errorResBody?.detail) {
-      throw new Error(`Failed to get model pool: ${errorResBody.detail}`);
-    } else {
-      throw new Error("Failed to get model pool: Unknown error");
-    }
-  }
-  sel = document.getElementById("model-select")
-  sel.empty()
-  response["model pool"].map((k, v) => {
-    let opt = document.createElement("option")
-    opt.value = k
-    opt.innerHtml = v
-    console.log(`Model: ${k} (${v})`)
-    sel.append(opt)
-  });
 }
 
 const BOM = [239, 187, 191];
