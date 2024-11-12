@@ -73,8 +73,8 @@ document.addEventListener("alpine:init", () => {
     },
 
     async populateSelector() {
-      const response = await fetch(`${this.endpoint}/modelpool`)
-      console.log("Populating Selector")
+      const response = await fetch(`${this.endpoint}/modelpool`);
+      console.log("Populating Selector");
       if(!response.ok) {
         const errorResBody = await response.json()
         if (errorResBody?.detail) {
@@ -83,14 +83,14 @@ document.addEventListener("alpine:init", () => {
           throw new Error("Failed to get model pool: Unknown error");
         }
       }
-      sel = document.getElementById("model-select")
-      sel.empty()
+      sel = document.getElementById("model-select");
+      sel.empty();
       response["model pool"].map((k, v) => {
-        let opt = document.createElement("option")
-        opt.value = k
-        opt.innerHtml = v
-        console.log(`Model: ${k} (${v})`)
-        sel.append(opt)
+        let opt = document.createElement("option");
+        opt.value = k;
+        opt.innerHtml = v;
+        console.log(`Model: ${k} (${v})`);
+        sel.append(opt);
       });
     },
 
