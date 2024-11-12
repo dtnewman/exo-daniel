@@ -200,7 +200,7 @@ class ChatGPTAPI:
     return web.FileResponse(self.static_dir/"index.html")
 
   async def handle_model_support(self, request):
-    return web.json_response(list(dict.fromkeys([i for i in self.node.topology_inference_engines_pool for i in i]])))
+    return web.json_response(list(dict.fromkeys([i for i in self.node.topology_inference_engines_pool for i in i])))
   
   async def handle_get_models(self, request):
     return web.json_response([{"id": model_name, "object": "model", "owned_by": "exo", "ready": True} for model_name, _ in model_cards.items()])
