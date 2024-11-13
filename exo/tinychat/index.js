@@ -75,13 +75,12 @@ document.addEventListener("alpine:init", () => {
     async populateSelector() {
       try {
         const response = await fetch(`${window.location.origin}/modelpool`);
-        const responseText = await response.text(); // Get raw response text first
+        const responseText = await response.text();
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        // Try to parse the response text
         let responseJson;
         try {
           responseJson = JSON.parse(responseText);
